@@ -1,0 +1,14 @@
+{
+    "logging_level": "debug",
+    "rotating_handler": {
+        "filename": "logs/ble_communication.log",
+        "encoding": "utf-8",
+        "rotation_time": "midnight",
+        "num_of_backups": 10,
+        "use_utc_time": true
+    },
+    "formatting": {
+        "message_format": "%(asctime)s %(levelname)s %(message)s",
+        "date_format": "%Y-%m-%d %H:%M:%S"
+    }
+}

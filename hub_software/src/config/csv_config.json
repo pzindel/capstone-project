@@ -1,0 +1,36 @@
+{
+	"DELIMITER": ",",
+	"HEADER": [
+		"id",
+		"utc_time",
+		"utc_offset",
+		"device_name",
+		"device_address",
+		"device_rssi",
+		"vent_closed",
+		"temperature",
+		"humidity"
+		]
+	"DATA_TYPES": {
+		"id": "int",
+		"utc_time": "int",
+		"utc_offset": "float",
+		"device_name": "str",
+		"device_address": "str",
+		"device_rssi": "int",
+		"vent_closed": "bool",
+		"temperature": "float",
+		"humidity": "float"
+	},
+	"DATA_DESCRIPTION": {
+		"id": "A unique identifier value for the entry.",
+		"utc_time": "A timestamp (in UTC+0) of when the data was recorded.",
+		"utc_offset": "The timezone offset, in hours, of the system at recording.",
+		"device_name": "The name of the vent device that the entry was recorded from.",
+		"device_address": "The MAC address of the vent device that the entry was recorded from.",
+		"device_rssi": "The singal strength between the hub and vent unit on last connect.",
+		"vent_closed": "A true/false indicating if the vent is closed at time of recording.",
+		"temperature": "A temperature measurement of the vent device.",
+		"humidity": "A humidity measurement of the vent device."
+	}
+}
