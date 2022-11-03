@@ -18,6 +18,7 @@
 #include <string.h>
 #if (I2C_DMA_CODE_EN)
 #include <dma_driver.h>
+#include <stdbool.h>
 #endif    /* if (I2C_DMA_CODE_EN) */
 
 /* Driver Version */

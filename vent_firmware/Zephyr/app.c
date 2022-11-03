@@ -1,7 +1,18 @@
-/**
- * @file app.c
- * @brief Main application source file
+/******************************************************************************
+ * File Name        : app.c
+ * Description		: Main application source file
  *
+ * Pinout			: HDC2080 Sensor (I2C peripheral)
+ *                          HDC_SCL <--> GPIO_11 (I2C_0 Clock)
+ *                          HDC_SDA <--> GPIO_12 (I2C_0 Data)
+ *                          HDC_INT <--> GPIO_XX (GPIO Input)
+ *                    FS90 Servo Motor (PWM peripheral)
+ *                    		FS90_CTRL <--> GPIO_2 (PWM_0 Signal)
+ *
+ * Author		    : Pierino Zindel
+ * Date				: October 25, 2022
+ * Version			: 0.1.0
+ ******************************************************************************
  * @copyright @parblock
  * Copyright (c) 2022 Semiconductor Components Industries, LLC (d/b/a
  * onsemi), All Rights Reserved
@@ -13,150 +24,140 @@
  *
  * This is Reusable Code.
  * @endparblock
+ ******************************************************************************
  */
 
-#include "app.h"
+#include <app.h>
 
 /* Global variables */
-volatile uint8_t led_toggle_status;
-DRIVER_GPIO_t *gpio;
-uint32_t _CRC __attribute__((section(".reset")));
+ARM_DRIVER_I2C *i2c;
+double temperature_reading = 0;
+double humidity_reading = 0;
+uint8_t motor_state = 0;
 
-void TIMER0_IRQHandler(void)
+void error_check(uint32_t status)
 {
-    if (led_toggle_status == 1)
+    /* Otherwise, halt the program */
+    if (status != ARM_DRIVER_OK)
     {
-        gpio->ToggleValue((GPIO_SEL_t)(TIMER0_STATES_GPIO));
-    }
-}
-
-void SysTick_Handler(void)
-{
-    if (led_toggle_status == 1)
-    {
-        gpio->ToggleValue((GPIO_SEL_t)(SYSTICK_STATES_GPIO));
-    }
-}
-
-void Button_EventCallback(uint32_t event)
-{
-    static uint8_t ignore_next_gpio_int = 0;
-    if (ignore_next_gpio_int == 1)
-    {
-        ignore_next_gpio_int = 0;
-    }
-    else if (event == GPIO_EVENT_0_IRQ)
-    {
-        /* Button is pressed: Ignore next interrupt.
-         * This is required to deal with the debounce circuit limitations. */
-        ignore_next_gpio_int = 1;
-
-        /* Invert the toggle status flag */
-        if (led_toggle_status == 1)
+        //ToggleGPIO(APP_I2C_EVENT_GPIO, 4, 2);
+        while (1)
         {
-            led_toggle_status = 0;
-        }
-        else
-        {
-            led_toggle_status = 1;
+            SYS_WATCHDOG_REFRESH();
         }
     }
 }
 
-/**
- * @brief Initialize the system, including GPIOs and interrupts.
- * @return Zero
- */
-void Initialize(void)
+void sensor_initialization(void)
 {
-    /* Interrupts off */
-    __set_PRIMASK(PRIMASK_DISABLE_INTERRUPTS);
-    __set_FAULTMASK(FAULTMASK_DISABLE_INTERRUPTS);
+	// Initialize the HDC2080 I2C connection
+	initialize_i2c_connection();
+	initialize_hdc2080();
 
-    /* Disable all existing interrupts, clearing all pending source */
-    Sys_NVIC_DisableAllInt();
-    Sys_NVIC_ClearAllPendingInt();
-
-	/* Debug Catch Mode
-	 * If DEBUG_CATCH_GPIO is low, enter Debug Catch Mode which holds the program execution in a
-	 * while loop to make it easier to connect to the debugger.
-	 * We suggest retaining this feature during development.
-	 */
-    SYS_GPIO_CONFIG(DEBUG_CATCH_GPIO, (GPIO_MODE_GPIO_IN | GPIO_LPF_DISABLE |
-                                       GPIO_WEAK_PULL_UP | GPIO_6X_DRIVE));
-
-    while ((Sys_GPIO_Read(DEBUG_CATCH_GPIO)) == 0)
-    {
-        SYS_WATCHDOG_REFRESH();
-    }
-
-    /* Load default trim values. */
-    uint32_t trim_error __attribute__((unused)) = SYS_TRIM_LOAD_DEFAULT();
-
-    /* Enable the 48MHz XTAL */
-    Sys_Clocks_XTALClkConfig(CK_DIV_1_6_PRESCALE_6_BYTE);
-
-    /* Switch to (divided 48 MHz) oscillator clock, and update the
-     * SystemCoreClock global variable. */
-    Sys_Clocks_SystemClkConfig(SYSCLK_CLKSRC_RFCLK);
-
-    /* Enable/disable buck converter */
-#ifdef RSL15_CID
-    Sys_ACS_WriteRegister(&ACS->VCC_CTRL, ((ACS->VCC_CTRL & ~VCC_BUCK) | VCC_BUCK_LDO_CTRL));
-#else    /* ifdef RSL15_CID */
-    ACS->VCC_CTRL = ((ACS->VCC_CTRL & ~VCC_BUCK) | VCC_BUCK_LDO_CTRL);
-#endif    /* ifdef RSL15_CID */
-
-    /* Configure clock dividers */
-    Sys_Clocks_DividerConfig(UART_CLK, SENSOR_CLK, USER_CLK);
-
-    /* Configure Baseband Controller Interface */
-    BBIF->CTRL = (BB_CLK_ENABLE | BBCLK_DIVIDER_8);
-
-    /* Interrupts back on */
-    __set_PRIMASK(PRIMASK_ENABLE_INTERRUPTS);
-    __set_FAULTMASK(FAULTMASK_ENABLE_INTERRUPTS);
+	return;
 }
 
-/**
- * @brief The main entry point for the program
- */
+void sensor_measure(void)
+{
+	// Trigger the sensor and store the results
+	trigger_measurement();
+	temperature_reading = get_temperature();
+	humidity_reading = get_humidity();
+
+	return;
+}
+
+void motor_initialization(void)
+{
+	// Initialize the PWM function and GPIO pins for the servo
+	// TODO: implement initialization function in motor driver module
+	//initialize_pwm_control();
+	//initialize_motor_pins();
+
+	return;
+}
+void motor_update(void)
+{
+	// Update the motor to the given state
+	// TODO: define a new set of drivers for the motor
+	//set_motor_state(motor_state);
+	return;
+}
+
+void ble_initialization(void)
+{
+	// TODO: implement
+
+    // Configure RF parameters and initialize BLE stack
+    BLESystemInit();
+
+    // Initialize Bluetooth Services */
+    BatteryServiceServerInit();
+    DeviceInformationServiceServerInit();
+    CustomServiceServerInit();
+
+    // Subscribe application callback handlers to BLE events
+    AppMsgHandlersInit();
+
+    // Prepare advertising and scan response data (device name + company ID)
+    PrepareAdvScanData();
+
+    /* In order to ensure that BLE lower layers are properly configured
+     * according to host stack requirement, perform a BLE software reset.
+     */
+    GAPM_SoftwareReset();    // Step 1 (see details in readme)
+
+    EnableBLEInterrupts();
+    EnableAppInterrupts();
+
+	return;
+}
+
 int main(void)
 {
-    /*Initialize global variables */
-    led_toggle_status = 1;
+    // Disable interrupts and exceptions temporarily at startup
+    PRIMASK_FAULTMASK_DISABLE_INTERRUPTS();
 
-    /* Initialize the system */
-    Initialize();
+	/* Initialize main functionalities */
+    DeviceInit();
+    SWMTraceInit();
 
-    /* Configure and start Timer 0 with a period of 200 ms */
-    Sys_Timer_Config(TIMER0, TIMER_PRESCALE_8 , TIMER_FREE_RUN, TIMER0_TIMEOUT_VAL_SETTING);
-    Sys_Timer_Start(TIMER0);
-    NVIC_EnableIRQ(TIMER0_IRQn);
+    // Print log
+    swmLogInfo("__%s has started.\n", "ble_peripheral_server");
 
-    /* Load and start SysTick Timer with a period of 100 ms (+/- 16 us) */
-    SysTick->CTRL = 0;
-    SysTick->LOAD = SYSTICK_RELOAD_VAL_SETTING;
-    SysTick->VAL  = 0;
-    SysTick->CTRL = ((0 << SysTick_CTRL_CLKSOURCE_Pos) |
-                     (1 << SysTick_CTRL_TICKINT_Pos)   |
-                     (1 << SysTick_CTRL_ENABLE_Pos));
-    NVIC_EnableIRQ(SysTick_IRQn);
+    /* Initialize peripherals */
 
-    /* Initialize GPIO structure */
-    gpio = &Driver_GPIO;
+    sensor_initialization();
+    motor_initialization();
+    ble_initialization();
 
-    /* Initialize GPIO driver */
-    gpio->Initialize(Button_EventCallback);
+    // Enable interrupts and exceptions
+    PRIMASK_FAULTMASK_ENABLE_INTERRUPTS();
 
+    //* Main application spin loop */
+    main_loop();
+}
 
-    /* Main application spin loop */
+void main_loop(void)
+{
     while (1)
     {
-        /* Refresh the watchdog timer */
+        // Refresh the watchdog timer //
         SYS_WATCHDOG_REFRESH();
-    }
+        BLE_Kernel_Process();
 
-    /* Should never be reached */
-    return 0;
+        if (GPIO0_Pressed())
+        {
+        	for (unsigned int i = 0; i < BLE_CONNECTION_MAX; i++)
+            {
+        		if(GAPC_IsConnectionActive(i))
+        		{
+        			ke_msg_send_basic(CUSTOM_BUTTON_NTF, KE_BUILD_ID(TASK_APP, i), KE_BUILD_ID(TASK_APP, i));
+        		}
+            }
+            GPIO0_Pressed_Flag_Clear();
+        }
+
+        __WFI();
+    }
 }

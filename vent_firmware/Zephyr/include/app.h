@@ -1,7 +1,18 @@
-/**
- * @file app.h
- * @brief Header file for main application
+/******************************************************************************
+ * File Name        : app.h
+ * Description		: Header file for main application.
  *
+ * Pinout			: HDC2080 Sensor (I2C peripheral)
+ *                          HDC_SCL <--> GPIO_11 (I2C_0 Clock)
+ *                          HDC_SDA <--> GPIO_12 (I2C_0 Data)
+ *                          HDC_INT <--> GPIO_XX (GPIO Input)
+ *                    FS90 Servo Motor (PWM peripheral)
+ *                    		FS90_CTRL <--> GPIO_2 (PWM_0 Signal)
+ *
+ * Author		    : Pierino Zindel
+ * Date				: October 25, 2022
+ * Version			: 0.1.0
+ ******************************************************************************
  * @copyright @parblock
  * Copyright (c) 2022 Semiconductor Components Industries, LLC (d/b/a
  * onsemi), All Rights Reserved
@@ -13,113 +24,322 @@
  *
  * This is Reusable Code.
  * @endparblock
+ ******************************************************************************
  */
 
 #ifndef APP_H_
 #define APP_H_
 
-/* ----------------------------------------------------------------------------
- * If building with a C++ compiler, make all of the definitions in this header
- * have a C binding.
- * ------------------------------------------------------------------------- */
 #ifdef __cplusplus
 extern "C"
 {
 #endif    /* ifdef __cplusplus */
 
+
 /* ----------------------------------------------------------------------------
  * Include files
  * --------------------------------------------------------------------------*/
+
 #include <hw.h>
 #include <string.h>
 #include <stdio.h>
-#include <RTE_Device.h>
-#include <gpio_driver.h>
+#include <stdbool.h>
+#include <swmTrace_api.h>
+#include <flash_rom.h>
+#include <ble_protocol_support.h>
+#include <ble_abstraction.h>
+
+#include <app_init.h>
+#include <app_msg_handler.h>
+#include <app_customss.h>
+#include <app_bass.h>
+#include <app_diss.h>
+#include <app_temperature_sensor.h>
+#include "RTE_Device.h"
+
+#include "i2c_driver.h"
+#include "HDC2080.h"
+
 
 /* ----------------------------------------------------------------------------
  * Defines
  * --------------------------------------------------------------------------*/
 
-/* GPIO definitions */
+/** APP Task messages */
+enum appm_msg
+{
+    APPM_DUMMY_MSG = TASK_FIRST_MSG(TASK_ID_APP),
+    APP_LED_TIMEOUT,
+    APP_BATT_LEVEL_READ_TIMEOUT,
+    APP_SW1_TIMEOUT,
+    APP_SW1LED_TIMEOUT
+};
+
+#define VCC_BUCK_LDO_CTRL               VCC_LDO
+
+//#define CONCAT(x, y)                    (x##y)
+#define GPIO_SRC(x)                     CONCAT(GPIO_SRC_GPIO_, x)
+
+/** Application common BLE parameter defines */
+/** Extended Advertising
+ *  Set this define to 1 to enable extended advertising */
+#define ADV_EXTENSION                   (0)
+
+#define APP_BLE_DEV_PARAM_SOURCE        APP_PROVIDED    /**< Or APP_PROVIDED FLASH_PROVIDED_or_DFLT. */
+
+/** Advertising channel map - 37, 38, 39 */
+#define APP_ADV_CHMAP                   GAPM_DEFAULT_ADV_CHMAP
+
+/* Advertising minimum interval - 40ms (64 * 0.625ms) */
+#define APP_ADV_INT_MIN                 GAPM_DEFAULT_ADV_INTV_MIN
+
+/* Advertising maximum interval - 40ms (64*0.625ms) */
+#define APP_ADV_INT_MAX                 GAPM_DEFAULT_ADV_INTV_MAX
+
+/** Location of BLE public address
+ *	- BLE public address location in MNVR is used as a default value;
+ *  - Any other valid locations can be used as needed.
+ */
+#define APP_BLE_PUBLIC_ADDR_LOC         BLE_PUBLIC_ADDR_LOC_MNVR
+
+#define GAPM_CFG_ADDR_PUBLIC            (0 << GAPM_PRIV_CFG_PRIV_ADDR_POS)
+#define GAPM_CFG_ADDR_PRIVATE           (1 << GAPM_PRIV_CFG_PRIV_ADDR_POS)
+
+#define GAPM_CFG_HOST_PRIVACY           (0 << GAPM_PRIV_CFG_PRIV_EN_POS)
+#define GAPM_CFG_CONTROLLER_PRIVACY     (1 << GAPM_PRIV_CFG_PRIV_EN_POS)
+
+#define GAPM_ADDRESS_TYPE               GAPM_CFG_ADDR_PRIVATE
+
+#define GAPM_PRIVACY_TYPE               GAPM_CFG_HOST_PRIVACY
+#define GAPM_OWN_ADDR_TYPE              GAPM_STATIC_ADDR    /**< GAPM_GEN_RSLV_ADDR for Host privacy. */
+
+#define APP_BD_RENEW_DUR                (150)    /**< In seconds. */
+
+/** BLE private address of local device */
+#ifndef APP_BLE_PRIVATE_ADDR
+#define APP_BLE_PRIVATE_ADDR            { 0x94, 0x11, 0x22, 0xff, 0xbb, 0xD5 }
+#endif	 /* APP_BLE_PRIVATE_ADDR */
+
+/** Number of standard profiles and custom services added in this application */
+#define APP_NUM_STD_PRF                 (2)
+#define APP_NUM_CUST_SVC                (2)
+
+/* GPIO number that is connected to LED of EVB */
+#define LED_STATE_GPIO                  GREEN_LED
+
+/* GPIO number that is used to determine the number of BLE connections */
+#define CONNECTION_STATE_GPIO           BLUE_LED
+
+/** Advertising data is composed by device name and company identification (ID)
+ *  Notes: In order to have both device name and company ID included in
+           the advertising, the length of APP_DEVICE_NAME should not exceed 22 bytes.*/
+#define APP_DEVICE_NAME                 "ble_periph_server"
+#define APP_DEVICE_NAME_LEN             (sizeof(APP_DEVICE_NAME) - 1)
+
+/** Manufacturer info (onsemi Company ID) */
+#define APP_COMPANY_ID                  { 0x62, 0x3 }
+#define APP_COMPANY_ID_LEN              (2)
+
+#define APP_DEVICE_APPEARANCE           (0)
+#define APP_PREF_SLV_MIN_CON_INTERVAL   (8)
+#define APP_PREF_SLV_MAX_CON_INTERVAL   (10)
+#define APP_PREF_SLV_LATENCY            (0)
+#define APP_PREF_SLV_SUP_TIMEOUT        (200)
+
+/** Application-provided IRK */
+#define APP_IRK                         { 0x01, 0x23, 0x45, 0x68, 0x78, 0x9a, \
+                                          0xbc, 0xde, 0x01, 0x23, 0x45, 0x68, \
+                                          0x78, 0x9a, 0xbc, 0xde }
+
+/** Application-provided CSRK */
+#define APP_CSRK                        { 0x01, 0x23, 0x45, 0x68, 0x78, 0x9a, \
+                                          0xbc, 0xde, 0x01, 0x23, 0x45, 0x68, \
+                                          0x78, 0x9a, 0xbc, 0xde }
+
+
+/** Based on enum gap_phy */
+#define APP_PREFERRED_PHY_RX            GAP_PHY_LE_CODED
+#define APP_PREFERRED_PHY_TX            GAP_PHY_LE_CODED
+
+/** Based on enum gapc_phy_option */
+#define APP_PREFERRED_CODED_PHY_RATE    GAPC_PHY_OPT_LE_CODED_125K_RATE
+
+#define SECURE_CONNECTION               (1)    /**< set 0 for LEGACY_CONNECTION or 1 for SECURE_CONNECTION. */
+
+/** Application common interface defines  */
+/* Enable/disable swmtrace */
+#define SWMTRACE_ENABLE                 (1)
+
+#define LOW_POWER_CLOCK_ACCURACY        (100)         /**< ppm */
+#define TWOSC                           (1200)        /**< us */
+#define MAX_SLEEP_DURATION              (0x17700)     /**< 30s */
+
+/** GPIO definitions */
 
 /* GPIO number that is used for Debug Catch Mode
  * to easily connect the device to the debugger */
-#define DEBUG_CATCH_GPIO                0
+#define DEBUG_CATCH_GPIO                (0)
+#define BUTTON_GPIO						0
+#define APP_I2C_EVENT_GPIO				(GREEN_LED)
 
-/* GPIO number that is acting as LED of EVB */
-#define TIMER0_STATES_GPIO              GREEN_LED
-#define SYSTICK_STATES_GPIO             BLUE_LED
+/** Default LSAD channel for SetTxPower */
+#define LSAD_TXPWR_DEF                  (1)
 
-/* Set UART peripheral clock */
-#define UART_CLK                        8000000
+/** Default TX power setting */
+#define DEF_TX_POWER                    (0)
 
-/* Set sensor clock */
-#define SENSOR_CLK                      32768
+/** Set UART peripheral clock */
+#define UART_CLK                        (8000000)
 
-/* Set user clock */
-#define USER_CLK                        1000000
+/** Set sensor clock */
+#define SENSOR_CLK                      (32768)
 
-/* Enable/disable buck converter
- * Options: VCC_BUCK or VCC_LDO
- */
-#define VCC_BUCK_LDO_CTRL               VCC_LDO
+/** Set user clock */
+#define USER_CLK                        (1000000)
 
-/* To set Timer0 interrupt interval to 200 ms
- * Assumptions:
- *    - SYSCLK = 8 MHz
- *    - Slow Clock Prescale = 8
- *    - Timer0 Clock Source = SLOWCLK32
- *    - Timer0 Prescale = 8
- */
-#define TIMER0_TIMEOUT_VAL_SETTING      781
+/** Enable/disable buck converter */
+//#define VCC_BUCK_LDO_CTRL               VCC_BUCK    /**< Or VCC_LDO */
 
-/* To set SysTick interrupt interval to 100 ms (+/- 16 us)
- * Assumptions:
- *    - SYSCLK = 8 MHz
- *    - Slow Clock Prescale = 8
- *    - SysTick Clock Source = SLOWCLK32
- * Notes: 32 us/step: 3125 => 100 ms (+/- 16 us)
- */
-#define SYSTICK_RELOAD_VAL_SETTING      3125
+/** The GPIO pin to use for TX when using the UART mode */
+#define UART_TX_GPIO                    (6)
+
+/** The GPIO pin to use for RX when using the UART mode */
+#define UART_RX_GPIO                    (5)
+
+/** The selected baud rate for the application when using UART mode */
+#define UART_BAUD                       (115200)
+
+/** Application specific other defines */
+/* Timer setting in units of 1ms (kernel timer resolution) */
+#define TIMER_SETTING_MS(MS)            MS
+#define TIMER_SETTING_S(S)              (S * 1000)
+
+/* Hold duration required to trigger bond list clear (in seconds) */
+#define CLR_BONDLIST_HOLD_DURATION_S    5
+
+/* Set 0 for default permission or 1 to require a secure connection link */
+#define BUTTON_SECURE_ATTRIBUTE			(0)
+
+/* Delay between each toggle in clear bond list (in milliseconds) */
+#define CLR_BONDLIST_LED_TOGGLE_INTERVAL_MS    100
+
+
+/* De-bounce definition */
+#define MAX_DEBOUNCE					(255)
+
+/* I2C GPIOs defined in RTE_Device.h */
+
 
 /* ----------------------------------------------------------------------------
  * Global variables and types
  * --------------------------------------------------------------------------*/
-extern DRIVER_GPIO_t Driver_GPIO;
+extern ARM_DRIVER_I2C Driver_I2C0;
+extern ARM_DRIVER_I2C *i2c;
+
 
 /* ----------------------------------------------------------------------------
  * Function prototypes
  * --------------------------------------------------------------------------*/
+
+
 /**
- * @brief   Toggle the global toggle status flag.
+ * @brief       Toggle the specified GPIO 'n' times, delayed by 'delay_s'
+ *              seconds.
+ * @param[in]   gpio GPIO number
+ * @param[in]   n  Number of toggles
+ * @param[in]   delay_s  Delay between each toggle
  */
-extern void Button_EventCallback(uint32_t event);
+extern void ToggleGPIO(uint32_t gpio, uint32_t n, uint32_t delay_ms);
 
 /**
- * @brief    Timer0 Interrupt Handler
+ * @brief       Interrupt handler triggered by a button press. Cancel any
+ *              ongoing transfers, switch to Master mode and start a
+ *              MasterTransmit operation through I2C.
  */
-extern void TIMER0_IRQHandler(void);
+extern void GPIO0_IRQHandler(void);
 
-/**
- * @brief    SysTick Interrupt Handler
+/* Function      : ble_initialization
+ *
+ * Description   :
+ *
+ * Parameters    : None
+ *
+ * Returns		 : None
  */
-extern void SysTick_Handler(void);
+void ble_initialization(void);
 
-
-/**
- * @brief Initialize the system, including GPIOs and interrupts.
- * @return Zero
+/* Function      : error_check
+ *
+ * Description   : Checks the return of the I2C->Control function for errors.
+ *                 if errors exist, exit program by running infinite loop.
+ *
+ * Parameters    : uint32_t status :
+ *
+ * Returns		 : None
  */
-void Initialize(void);
+extern void error_check(uint32_t status);
 
-/**
- * @brief The main entry point for the program
+/* Function      : main
+ *
+ * Description   : The main entry point for the program.
+ *
+ * Parameters    : None
+ *
+ * Returns		 : None
  */
 int main(void);
 
-/* ----------------------------------------------------------------------------
- * Close the 'extern "C"' block
- * ------------------------------------------------------------------------- */
+/* Function      : main_loop
+ *
+ * Description   : This function contains the application spin loop for main.
+ *
+ * Parameters    : None
+ *
+ * Returns		 : None
+ */
+void main_loop(void);
+
+/* Function      : motor_initialization
+ *
+ * Description   :
+ *
+ * Parameters    : None
+ *
+ * Returns		 : None
+ */
+void motor_initialization(void);
+
+/* Function      : motor_update
+ *
+ * Description   :
+ *
+ * Parameters    : None
+ *
+ * Returns		 : None
+ */
+void motor_update(void);
+
+/* Function      : sensor_initialization
+ *
+ * Description   :
+ *
+ * Parameters    : None
+ *
+ * Returns		 : None
+ */
+void sensor_initialization(void);
+
+/* Function      : sensor_measure
+ *
+ * Description   :
+ *
+ * Parameters    : None
+ *
+ * Returns		 : None
+ */
+void sensor_measure(void);
+
+
 #ifdef __cplusplus
 }
 #endif    /* ifdef __cplusplus */

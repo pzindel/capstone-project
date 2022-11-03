@@ -33,9 +33,9 @@
     #warning "I2C0 not configured in RTE_Device.h!"
 #endif    /* if (!RTE_I2C0_ENABLED) */
 
-#if (!RTE_I2C1_ENABLED)
-#warning "I2C1 not configured in RTE_Device.h!"
-#endif    /* if (!RTE_I2C1_ENABLED) */
+//#if (!RTE_I2C1_ENABLED)
+//	#warning "I2C1 not configured in RTE_Device.h!"
+//#endif    /* if (!RTE_I2C1_ENABLED) */
 
 /* Driver version */
 #define ARM_I2C_DRV_VERSION    ARM_DRIVER_VERSION_MAJOR_MINOR(1, 0)

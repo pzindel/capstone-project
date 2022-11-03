@@ -1,8 +1,8 @@
 /**
  * @file RTE_Device.h
  * @brief This file is used to configure the CMSIS-Driver for each interface.
- *        To open this configuration file in GUI mode, right-click it and select
- *        Open with > CMSIS Configuration Wizard.
+ *  To open this configuration file in GUI mode, right-click it and select
+ *  Open with > CMSIS Configuration Wizard.
  *
  * @copyright @parblock
  * Copyright (c) 2021 Semiconductor Components Industries, LLC (d/b/a
@@ -114,7 +114,7 @@
 //   <i> Configure whether the destination address increments/decrements in terms of source word size
 //   <i> Default: Do not increment the destination address used by DMA channel
 #ifndef RTE_DMA0_DST_STEP_DEFAULT
-#define RTE_DMA0_DST_STEP_DEFAULT       0
+#define RTE_DMA0_DST_STEP_DEFAULT       1
 #endif
 // </h>
 //   <o> Word size select
@@ -144,7 +144,7 @@
 //   <i> Select the source and destination word sizes for the transfer
 //   <i> Default: 0
 #ifndef RTE_DMA0_SRC_DEST_WORD_SIZE_DEFAULT
- #define RTE_DMA0_SRC_DEST_WORD_SIZE_DEFAULT   0
+ #define RTE_DMA0_SRC_DEST_WORD_SIZE_DEFAULT   18
 #endif
 //   <o>Channel priority
 //       <0x0=> 0  <0x1=> 1
@@ -186,7 +186,7 @@
 // <i> Enables dma channel 1 configuration.
 // <i> Default: 1
 #ifndef RTE_DMA1_AUTO_EN
- #define RTE_DMA1_AUTO_EN       0
+ #define RTE_DMA1_AUTO_EN       1
 #endif
 // <h>Source configuration
 // ===============================
@@ -321,7 +321,7 @@
 //   <i> Defines if dma 2 should be enabled.
 //   <i> Default: 1
 #ifndef RTE_DMA2_EN
- #define RTE_DMA2_EN       1
+ #define RTE_DMA2_EN       0
 #endif
 // <e>DMA 2 auto configuration
 // ===============================
@@ -329,7 +329,7 @@
 // <i> Enables dma channel 2 configuration.
 // <i> Default: 1
 #ifndef RTE_DMA2_AUTO_EN
- #define RTE_DMA2_AUTO_EN       0
+ #define RTE_DMA2_AUTO_EN       1
 #endif
 // <h>Source configuration
 // ===============================
@@ -463,7 +463,7 @@
 //   <i> Defines if dma 3 should be enabled.
 //   <i> Default: 1
 #ifndef RTE_DMA3_EN
- #define RTE_DMA3_EN       1
+ #define RTE_DMA3_EN       0
 #endif
 // <e>DMA 3 auto configuration
 // ===============================
@@ -471,7 +471,7 @@
 // <i> Enables dma channel 3 configuration.
 // <i> Default: 1
 #ifndef RTE_DMA3_AUTO_EN
- #define RTE_DMA3_AUTO_EN       0
+ #define RTE_DMA3_AUTO_EN       1
 #endif
 // <h>Source configuration
 // ===============================
@@ -645,17 +645,77 @@
 // <i> Configuration settings for Driver_USART0 in component ::CMSIS Driver:USART
 #define RTE_USART0_ENABLED               0
 
-//   <o> USART0_RX GPIO <0-15>
-#define RTE_USART0_RX_PIN                5
+//   <e>USART auto configuration
+// ===============================
+//
+//   <i> If enabled, extends the initialize function so all configuration steps are performed at once.
+//   <i> Drivers are also powered up during initialization if enabled.
+//   <i> Default: enable
+#ifndef RTE_USART_CFG_EN_DEFAULT
+ #define RTE_USART_CFG_EN_DEFAULT   1
+#endif
+//   <o>Baudrate
+//       <4800=> 4800     <9600=> 9600
+//       <19200=> 19200   <38400=> 38400
+//       <57600=> 57600   <115200=> 115200
+//       <230400=> 230400 <460800=> 460800
+//   <i> Defines the usart baudrate.
+//   <i> Default: 115200
+#ifndef RTE_USART0_BAUDRATE_DEFAULT
+ #define RTE_USART0_BAUDRATE_DEFAULT   115200
+#endif
+// </e>
 
-//   <o> USART0_TX GPIO <0-15>
+// <h>USART GPIO configuration
+// ===============================
+//
+//   <o>USART0_RX GPIO
+//       <0x0=> 0
+//       <0x1=> 1
+//       <0x2=> 2
+//       <0x3=> 3
+//       <0x4=> 4
+//       <0x5=> 5
+//       <0x6=> 6
+//       <0x7=> 7
+//       <0x8=> 8
+//       <0x9=> 9
+//       <0xA=> 10
+//       <0xB=> 11
+//       <0xC=> 12
+//       <0xD=> 13
+//       <0xE=> 14
+//       <0xF=> 15
+//   <i> Defines gpio pad number to be used as a rx data line.
+//   <i> Default: 0
+#define RTE_USART0_RX_PIN                5
+//   <o>USART0_TX GPIO
+//       <0x0=> 0
+//       <0x1=> 1
+//       <0x2=> 2
+//       <0x3=> 3
+//       <0x4=> 4
+//       <0x5=> 5
+//       <0x6=> 6
+//       <0x7=> 7
+//       <0x8=> 8
+//       <0x9=> 9
+//       <0xA=> 10
+//       <0xB=> 11
+//       <0xC=> 12
+//       <0xD=> 13
+//       <0xE=> 14
+//       <0xF=> 15
+//   <i> Defines gpio pad number to be used as a tx data line.
+//   <i> Default: 0
 #define RTE_USART0_TX_PIN                6
+// </h>
 
 // </e>
 
 // <e> I2C0 (Inter-integrated Circuit Interface 0)
 // <i> Configuration settings for Driver_I2C0 in component ::CMSIS Driver:I2C
-#define RTE_I2C0_ENABLED                 0
+#define RTE_I2C0_ENABLED                 1
 
 //   <o> I2C0_SCL GPIO <0-15>
 #define RTE_I2C0_SCL_PIN                 11
@@ -677,6 +737,23 @@
 //      <GPIO_WEAK_PULL_DOWN=>Weak pull-down
 #define RTE_I2C0_GPIO_PULL               GPIO_STRONG_PULL_UP
 
+// <e>I2C0 DMA control
+// ===============================
+//
+//   <i> Enables dma control of i2c0 module
+//   <i> Default: 0 */
+#ifndef RTE_I2C0_DMA_EN_DEFAULT
+ #define RTE_I2C0_DMA_EN_DEFAULT       1
+#endif
+//   <o>I2C0 dma channel selection
+//       <0x0=> 0  <0x1=> 1
+//       <0x2=> 2  <0x3=> 3
+//   <i> Defines which dma channel should be used for data transfer (valid only if dma control was selected).
+//   <i> Default: 0
+#ifndef RTE_I2C0_DMA_CH_DEFAULT
+ #define RTE_I2C0_DMA_CH_DEFAULT        0
+#endif
+// </e>
 // </e>
 
 // <e> I2C1 (Inter-integrated Circuit Interface 1)
@@ -703,6 +780,440 @@
 //      <GPIO_WEAK_PULL_DOWN=>Weak pull-down
 #define RTE_I2C1_GPIO_PULL               GPIO_STRONG_PULL_UP
 
+// </e>
+
+// <e>SAI Configuration
+// =======================
+//
+//   <i> Defines if SAI PCM driver should be enabled.
+//   <i> Default: 1
+#ifndef RTE_SAI_PCM
+ #define RTE_SAI_PCM     0
+#endif
+//   <e>SAI Auto configuration
+// ===============================
+//
+//   <i> If enabled, extends the initialize function so all configuration steps are performed at once.
+//   <i> Drivers are also powered up during initialization if enabled.
+//   <i> Default: enable
+#ifndef RTE_SAI_CFG_EN_DEFAULT
+ #define RTE_SAI_CFG_EN_DEFAULT   1
+#endif
+//   <o>Mode selection
+//       <0x0=> slave
+//       <0x1=> master
+//   <i> Defines if driver should be configured as slave or master
+//   <i> Default: slave
+#ifndef RTE_SAI_MODE_DEFAULT
+ #define RTE_SAI_MODE_DEFAULT   0
+#endif
+//   <o>Protocol selection
+//       <0x1=> I2S
+//       <0x4=> PCM short
+//       <0x5=> PCM long
+//   <i> Sets the sai protocol
+//   <i> Default: I2S
+#ifndef RTE_SAI_PROTOCOL_DEFAULT
+ #define RTE_SAI_PROTOCOL_DEFAULT   1
+#endif
+//   <o>Word size
+//       <0x8=> 8bits (not supported in PCM long)
+//       <0x10=> 16bits
+//       <0x18=> 24bits
+//       <0x20=> 32bits
+//   <i> Sets the word size. If dma is used, only 32bit mode is supported.
+//   <i> Default: 16
+#ifndef RTE_SAI_WORD_SIZE_DEFAULT
+ #define RTE_SAI_WORD_SIZE_DEFAULT   32
+#endif
+//   <o>Clock prescale <1-4096>
+//   <i> Defines the mclk clock prescale
+//   <i> Default: 1
+#ifndef RTE_SAI_MCLK_PRESCALE_DEFAULT
+ #define RTE_SAI_MCLK_PRESCALE_DEFAULT   64
+#endif
+// </e>
+// <e>SAI DMA control
+// ===============================
+//
+//   <i> Enables DMA control of SAI module
+//   <i> Default: 0
+#ifndef RTE_SAI_DMA_EN_DEFAULT
+ #define RTE_SAI_DMA_EN_DEFAULT       0
+#endif
+//   <o>SAI RX DMA channel selection
+//       <0x0=> 0  <0x1=> 1
+//       <0x2=> 2  <0x3=> 3
+//   <i> Defines which DMA channel should be used for data transfer (valid only if DMA control was selected).
+//   <i> Default: 0
+#ifndef RTE_SAI_RX_DMA_CH_DEFAULT
+ #define RTE_SAI_RX_DMA_CH_DEFAULT   0
+#endif
+//   <o>SAI TX DMA channel selection
+//       <0x0=> 0  <0x1=> 1
+//       <0x2=> 2  <0x3=> 3
+//   <i> Defines which DMA channel should be used for data transfer (valid only if DMA control was selected).
+//   <i> Default: 1
+#ifndef RTE_SAI_TX_DMA_CH_DEFAULT
+ #define RTE_SAI_TX_DMA_CH_DEFAULT   1
+#endif
+// </e>
+// <h>SAI PCM pins configuration
+// ===============================
+//
+//   <o>PCM MCLK pin
+//       <0x0=> 0
+//       <0x1=> 1
+//       <0x2=> 2
+//       <0x3=> 3
+//       <0x4=> 4
+//       <0x5=> 5
+//       <0x6=> 6
+//       <0x7=> 7
+//       <0x8=> 8
+//       <0x9=> 9
+//       <0xA=> 10
+//       <0xB=> 11
+//       <0xC=> 12
+//       <0xD=> 13
+//       <0xE=> 14
+//       <0xF=> 15
+//   <i> Defines GPIO pad number to be used as the PCM clock line.
+//   <i> Default: 0
+#ifndef RTE_SAI_PCM_MCLK_PIN_DEFAULT
+ #define RTE_SAI_PCM_MCLK_PIN_DEFAULT  11
+#endif
+//   <o>PCM Frame pin
+//       <0x0=> 0
+//       <0x1=> 1
+//       <0x2=> 2
+//       <0x3=> 3
+//       <0x4=> 4
+//       <0x5=> 5
+//       <0x6=> 6
+//       <0x7=> 7
+//       <0x8=> 8
+//       <0x9=> 9
+//       <0xA=> 10
+//       <0xB=> 11
+//       <0xC=> 12
+//       <0xD=> 13
+//       <0xE=> 14
+//       <0xF=> 15
+//   <i> Defines GPIO pad number to be used as the PCM frame line.
+//   <i> Default: 1
+#ifndef RTE_SAI_PCM_FRAME_PIN_DEFAULT
+ #define RTE_SAI_PCM_FRAME_PIN_DEFAULT  12
+#endif
+//   <o>PCM SERI pin
+//       <0x0=> 0
+//       <0x1=> 1
+//       <0x2=> 2
+//       <0x3=> 3
+//       <0x4=> 4
+//       <0x5=> 5
+//       <0x6=> 6
+//       <0x7=> 7
+//       <0x8=> 8
+//       <0x9=> 9
+//       <0xA=> 10
+//       <0xB=> 11
+//       <0xC=> 12
+//       <0xD=> 13
+//       <0xE=> 14
+//       <0xF=> 15
+//   <i> Defines GPIO pad number to be used as the seri line.
+//   <i> Default: 2
+#ifndef RTE_SAI_PCM_SERI_PIN_DEFAULT
+ #define RTE_SAI_PCM_SERI_PIN_DEFAULT  13
+#endif
+//   <o>PCM SERO pin
+//       <0x0=> 0
+//       <0x1=> 1
+//       <0x2=> 2
+//       <0x3=> 3
+//       <0x4=> 4
+//       <0x5=> 5
+//       <0x6=> 6
+//       <0x7=> 7
+//       <0x8=> 8
+//       <0x9=> 9
+//       <0xA=> 10
+//       <0xB=> 11
+//       <0xC=> 12
+//       <0xD=> 13
+//       <0xE=> 14
+//       <0xF=> 15
+//   <i> Defines GPIO pad number to be used as the sero line.
+//   <i> Default: 3
+#ifndef RTE_SAI_PCM_SERO_PIN_DEFAULT
+ #define RTE_SAI_PCM_SERO_PIN_DEFAULT  14
+#endif
+// </h>
+// <h>SAI Interrupt priority configuration
+// ===============================
+//
+//   <o>Pre-empt priority <0-0x7>
+//   <i> Defines the pre-empt priority
+//   <i> Default: 0
+#ifndef RTE_SAI_INT_PREEMPT_PRI_DEFAULT
+ #define RTE_SAI_INT_PREEMPT_PRI_DEFAULT   0
+#endif
+//   <o>Subgroup priority <0-0x7>
+//   <i> Defines the subgroup priority
+//   <i> Default: 0
+#ifndef RTE_SAI_INT_SUBGRP_PRI_DEFAULT
+ #define RTE_SAI_INT_SUBGRP_PRI_DEFAULT   0
+#endif
+// </h>
+// </e>
+
+// <e>PWM Configuration
+// =======================
+//
+//   <i> Defines if PWM driver should be enabled.
+//   <i> Default: 1
+#ifndef RTE_PWM
+ #define RTE_PWM     0
+#endif
+// <e>PWM SLOWCLK Select
+// ===============================
+//
+// <i> Clock the PWM module on SLOWCLK.
+// <i> Default: 0 - SYSCLK
+#ifndef RTE_PWM_SLOWCLK
+ #define RTE_PWM_SLOWCLK       0
+#endif
+// </e>
+// <e>PWM0 enable
+// ===============================
+//
+// <i> Enables PWM0 module.
+// <i> Default: 1
+#ifndef RTE_PWM0_EN
+ #define RTE_PWM0_EN       0
+#endif
+//   <o>PWM0 GPIO pad
+//       <0=> 0 <1=> 1
+//       <2=> 2 <3=> 3
+//       <4=> 4 <5=> 5
+//       <6=> 6 <7=> 7
+//       <8=> 8 <9=> 9
+//       <10=> 10 <11=> 11
+//       <12=> 12 <13=> 13
+//       <14=> 14 <15=> 15
+//   <i> Defines the GPIO pad which should be used for the PWM0
+//   <i> Default: 1
+#ifndef RTE_PWM0_GPIO_PIN
+ #define RTE_PWM0_GPIO_PIN   1
+#endif
+//   <o>PWM0 period [cycles] <0-255>
+//   <i> Defines the PWM0 period
+//   <i> Default: 100
+#ifndef RTE_PWM0_PER_DEFAULT
+ #define RTE_PWM0_PER_DEFAULT   100
+#endif
+//   <o>PWM0 duty cycle [cycles] <0-255>
+//   <i> Defines the PWM0 duty cycle
+//   <i> Default: 50
+#ifndef RTE_PWM0_DTC_DEFAULT
+ #define RTE_PWM0_DTC_DEFAULT   50
+#endif
+//   <o>PWM0 dithering [cycles] <0-255>
+//   <i> Defines the PWM0 dithering
+//   <i> Default: 0
+#ifndef RTE_PWM0_DITH_DEFAULT
+ #define RTE_PWM0_DITH_DEFAULT   0
+#endif
+// </e>
+// <e>PWM1 enable
+// ===============================
+//
+// <i> Enables PWM1 module.
+// <i> Default: 1
+#ifndef RTE_PWM1_EN
+ #define RTE_PWM1_EN       0
+#endif
+//   <o>PWM1 GPIO pad
+//       <0=> 0 <1=> 1
+//       <2=> 2 <3=> 3
+//       <4=> 4 <5=> 5
+//       <6=> 6 <7=> 7
+//       <8=> 8 <9=> 9
+//       <10=> 10 <11=> 11
+//       <12=> 12 <13=> 13
+//       <14=> 14 <15=> 15
+//   <i> Defines the GPIO pad which should be used for the PWM1
+//   <i> Default: 2
+#ifndef RTE_PWM1_GPIO_PIN
+ #define RTE_PWM1_GPIO_PIN   2
+#endif
+//   <o>PWM1 period [cycles] <0-255>
+//   <i> Defines the PWM1 period
+//   <i> Default: 100
+#ifndef RTE_PWM1_PER_DEFAULT
+ #define RTE_PWM1_PER_DEFAULT   100
+#endif
+//   <o>PWM1 duty cycle [cycles] <0-255>
+//   <i> Defines the PWM1 duty cycle
+//   <i> Default: 50
+#ifndef RTE_PWM1_DTC_DEFAULT
+ #define RTE_PWM1_DTC_DEFAULT   50
+#endif
+//   <o>PWM1 dithering [cycles] <0-255>
+//   <i> Defines the PWM1 dithering
+//   <i> Default: 0
+#ifndef RTE_PWM1_DITH_DEFAULT
+ #define RTE_PWM1_DITH_DEFAULT   0
+#endif
+//   <o>PWM1 offset [cycles] <0-255>
+//   <i> Defines the PWM1-PWM2 offset
+//   <i> Default: 0
+#ifndef RTE_PWM1_OFF_DEFAULT
+ #define RTE_PWM1_OFF_DEFAULT   0
+#endif
+// </e>
+// <e>PWM2 enable
+// ===============================
+//
+// <i> Enables PWM2 module.
+// <i> Default: 1
+#ifndef RTE_PWM2_EN
+ #define RTE_PWM2_EN       0
+#endif
+//   <o>PWM2 GPIO pad
+//       <0=> 0 <1=> 1
+//       <2=> 2 <3=> 3
+//       <4=> 4 <5=> 5
+//       <6=> 6 <7=> 7
+//       <8=> 8 <9=> 9
+//       <10=> 10 <11=> 11
+//       <12=> 12 <13=> 13
+//       <14=> 14 <15=> 15
+//   <i> Defines the GPIO pad which should be used for the PWM2
+//   <i> Default: 3
+#ifndef RTE_PWM2_GPIO_PIN
+ #define RTE_PWM2_GPIO_PIN   3
+#endif
+//   <o>PWM2 period [cycles] <0-255>
+//   <i> Defines the PWM2 period
+//   <i> Default: 100
+#ifndef RTE_PWM2_PER_DEFAULT
+ #define RTE_PWM2_PER_DEFAULT   100
+#endif
+//   <o>PWM2 duty cycle [cycles] <0-255>
+//   <i> Defines the PWM2 duty cycle
+//   <i> Default: 50
+#ifndef RTE_PWM2_DTC_DEFAULT
+ #define RTE_PWM2_DTC_DEFAULT   50
+#endif
+//   <o>PWM2 dithering [cycles] <0-255>
+//   <i> Defines the PWM2 dithering
+//   <i> Default: 0
+#ifndef RTE_PWM2_DITH_DEFAULT
+ #define RTE_PWM2_DITH_DEFAULT   0
+#endif
+//   <o>PWM2 offset [cycles] <0-255>
+//   <i> Defines the PWM2-PWM3 offset
+//   <i> Default: 0
+#ifndef RTE_PWM2_OFF_DEFAULT
+ #define RTE_PWM2_OFF_DEFAULT   0
+#endif
+// </e>
+// <e>PWM3 enable
+// ===============================
+//
+// <i> Enables PWM3 module.
+// <i> Default: 1
+#ifndef RTE_PWM3_EN
+ #define RTE_PWM3_EN       0
+#endif
+//   <o>PWM3 GPIO pad
+//       <0=> 0 <1=> 1
+//       <2=> 2 <3=> 3
+//       <4=> 4 <5=> 5
+//       <6=> 6 <7=> 7
+//       <8=> 8 <9=> 9
+//       <10=> 10 <11=> 11
+//       <12=> 12 <13=> 13
+//       <14=> 14 <15=> 15
+//   <i> Defines the GPIO pad which should be used for the PWM3
+//   <i> Default: 4
+#ifndef RTE_PWM3_GPIO_PIN
+ #define RTE_PWM3_GPIO_PIN   4
+#endif
+//   <o>PWM3 period [cycles] <0-255>
+//   <i> Defines the PWM3 period
+//   <i> Default: 100
+#ifndef RTE_PWM3_PER_DEFAULT
+ #define RTE_PWM3_PER_DEFAULT   100
+#endif
+//   <o>PWM3 duty cycle [cycles] <0-255>
+//   <i> Defines the PWM3 duty cycle
+//   <i> Default: 50
+#ifndef RTE_PWM3_DTC_DEFAULT
+ #define RTE_PWM3_DTC_DEFAULT   50
+#endif
+//   <o>PWM3 dithering [cycles] <0-255>
+//   <i> Defines the PWM3 dithering
+//   <i> Default: 0
+#ifndef RTE_PWM3_DITH_DEFAULT
+ #define RTE_PWM3_DITH_DEFAULT   0
+#endif
+//   <o>PWM3 offset [cycles] <0-255>
+//   <i> Defines the PWM3-PWM4 offset
+//   <i> Default: 0
+#ifndef RTE_PWM3_OFF_DEFAULT
+ #define RTE_PWM3_OFF_DEFAULT   0
+#endif
+// </e>
+// <e>PWM4 enable
+// ===============================
+//
+// <i> Enables PWM4 module.
+// <i> Default: 1
+#ifndef RTE_PWM4_EN
+ #define RTE_PWM4_EN       0
+#endif
+//   <o>PWM4 GPIO pad
+//       <0=> 0 <1=> 1
+//       <2=> 2 <3=> 3
+//       <4=> 4 <5=> 5
+//       <6=> 6 <7=> 7
+//       <8=> 8 <9=> 9
+//       <10=> 10 <11=> 11
+//       <12=> 12 <13=> 13
+//       <14=> 14 <15=> 15
+//   <i> Defines the GPIO pad which should be used for the PWM4
+//   <i> Default: 5
+#ifndef RTE_PWM4_GPIO_PIN
+ #define RTE_PWM4_GPIO_PIN   5
+#endif
+//   <o>PWM4 period [cycles] <0-255>
+//   <i> Defines the PWM4 period
+//   <i> Default: 100
+#ifndef RTE_PWM4_PER_DEFAULT
+ #define RTE_PWM4_PER_DEFAULT   100
+#endif
+//   <o>PWM4 duty cycle [cycles] <0-255>
+//   <i> Defines the PWM4 duty cycle
+//   <i> Default: 50
+#ifndef RTE_PWM4_DTC_DEFAULT
+ #define RTE_PWM4_DTC_DEFAULT   50
+#endif
+//   <o>PWM4 dithering [cycles] <0-255>
+//   <i> Defines the PWM4 dithering
+//   <i> Default: 0
+#ifndef RTE_PWM4_DITH_DEFAULT
+ #define RTE_PWM4_DITH_DEFAULT   0
+#endif
+//   <o>PWM4 offset [cycles] <0-255>
+//   <i> Defines the PWM4-PWM0 offset
+//   <i> Default: 0
+#ifndef RTE_PWM4_OFF_DEFAULT
+ #define RTE_PWM4_OFF_DEFAULT   0
+#endif
+// </e>
 // </e>
 
 // <e> SPI0 (Serial Peripheral Interface 0) [Driver_SPI0]
@@ -927,13 +1438,470 @@
 // </e>
 // </e>
 
+// <e>TIMER Configuration
+// =======================
+//
+//   <i> Defines if TIMER driver should be enabled.
+//   <i> Default: 1
+#ifndef RTE_TIMER
+ #define RTE_TIMER     0
+#endif
+// <e>TIMER0 enable
+// ===============================
+//
+// <i> Enables TIMER0 module.
+// <i> Default: 1
+#ifndef RTE_TIMER0_EN
+ #define RTE_TIMER0_EN       0
+#endif
+//   <o>mode
+//       <0x0=> SHOT MODE
+//       <0x1=> FREE RUN
+//   <i> Defines the timer mode
+//   <i> Default: SHOT MODE
+#ifndef RTE_TIMER0_MODE_DEFAULT
+ #define RTE_TIMER0_MODE_DEFAULT   1
+#endif
+//   <o>clock source
+//       <0x0=> SLOWCLOCK DIV32
+//       <0x1=> SLOWCLOCK DIV2
+//   <i> Defines the timer clock source
+//   <i> Default: SLOWCLOCK DIV32
+#ifndef RTE_TIMER0_CLKSRC_DEFAULT
+ #define RTE_TIMER0_CLKSRC_DEFAULT   0
+#endif
+//   <o>prescale
+//       <0x0=> 1
+//       <0x1=> 2
+//       <0x2=> 4
+//       <0x3=> 8
+//       <0x4=> 16
+//       <0x5=> 32
+//       <0x6=> 64
+//       <0x7=> 128
+//   <i> Defines the timer0 prescale
+//   <i> Default: 1
+#ifndef RTE_TIMER0_PRESCALE_DEFAULT
+ #define RTE_TIMER0_PRESCALE_DEFAULT   0
+#endif
+//   <o>multi count value
+//       <0x0=> 1
+//       <0x1=> 2
+//       <0x2=> 3
+//       <0x3=> 4
+//       <0x4=> 5
+//       <0x5=> 6
+//       <0x6=> 7
+//       <0x7=> 8
+//   <i> Defines the timer0 multi count value
+//   <i> Default: 1
+#ifndef RTE_TIMER0_MULTI_COUNT_DEFAULT
+ #define RTE_TIMER0_MULTI_COUNT_DEFAULT   0
+#endif
+//   <o>timeout value [cycles] <0-0xFFFFFF>
+//   <i> Defines the timer0 timeout value
+//   <i> Default: 100000
+#ifndef RTE_TIMER0_TIMEOUT_DEFAULT
+ #define RTE_TIMER0_TIMEOUT_DEFAULT   2048
+#endif
+//   <e>GPIO Enable
+// ===============================
+//
+//   <i> If enabled, GPIO mode can be used for capturing timer interrupt.
+//   <i> Default: disable
+#ifndef RTE_GPIO0_EN
+ #define RTE_GPIO0_EN   0
+#endif
+//   <o>GPIO Interrupt
+//       <0x0=> 0
+//       <0x1=> 1
+//       <0x2=> 2
+//       <0x3=> 3
+//   <i> Defines gpio interrupt number to be used for the timer configuration.
+//   <i> Default: 0
+#ifndef RTE_TIMER0_GPIO_INT_DEFAULT
+ #define RTE_TIMER0_GPIO_INT_DEFAULT   0
+#endif
+//   <o>GPIO Mode
+//       <0x0=> Single Mode
+//       <0x1=> Continuous Mode
+//   <i> Defines the GPIO Capture Mode
+//   <i> Default: Single Mode
+#ifndef RTE_TIMER0_GPIO_MODE_DEFAULT
+ #define RTE_TIMER0_GPIO_MODE_DEFAULT   0
+#endif
+// </e>
+
+// <h>Interrupt priority configuration
+// ===============================
+//
+//   <o>Pre-empt priority <0-0x7>
+//   <i> Defines the pre-empt priority
+//   <i> Default: 0
+#ifndef RTE_TIMER0_INT_PREEMPT_PRI
+ #define RTE_TIMER0_INT_PREEMPT_PRI   0
+#endif
+//   <o>Subgroup priority <0-0x7>
+//   <i> Defines the subgroup priority
+//   <i> Default: 0
+#ifndef RTE_TIMER0_INT_SUBGRP_PRI
+ #define RTE_TIMER0_INT_SUBGRP_PRI   0
+#endif
+// </h>
+// </e>
+// <e>TIMER1 enable
+// ===============================
+//
+// <i> Enables TIMER1 module.
+// <i> Default: 1
+#ifndef RTE_TIMER1_EN
+ #define RTE_TIMER1_EN       0
+#endif
+//   <o>mode
+//       <0x0=> SHOT MODE
+//       <0x1=> FREE RUN
+//   <i> Defines the timer mode
+//   <i> Default: SHOT MODE
+#ifndef RTE_TIMER1_MODE_DEFAULT
+ #define RTE_TIMER1_MODE_DEFAULT   0
+#endif
+//   <o>clock source
+//       <0x0=> SLOWCLOCK DIV32
+//       <0x1=> SLOWCLOCK DIV2
+//   <i> Defines the timer clock source
+//   <i> Default: SLOWCLOCK DIV32
+#ifndef RTE_TIMER1_CLKSRC_DEFAULT
+ #define RTE_TIMER1_CLKSRC_DEFAULT   0
+#endif
+//   <o>prescale
+//       <0x0=> 1
+//       <0x1=> 2
+//       <0x2=> 4
+//       <0x3=> 8
+//       <0x4=> 16
+//       <0x5=> 32
+//       <0x6=> 64
+//       <0x7=> 128
+//   <i> Defines the TIMER1 prescale
+//   <i> Default: 1
+#ifndef RTE_TIMER1_PRESCALE_DEFAULT
+ #define RTE_TIMER1_PRESCALE_DEFAULT   0
+#endif
+//   <o>multi count value
+//       <0x0=> 1
+//       <0x1=> 2
+//       <0x2=> 3
+//       <0x3=> 4
+//       <0x4=> 5
+//       <0x5=> 6
+//       <0x6=> 7
+//       <0x7=> 8
+//   <i> Defines the TIMER1 multi count value
+//   <i> Default: 1
+#ifndef RTE_TIMER1_MULTI_COUNT_DEFAULT
+ #define RTE_TIMER1_MULTI_COUNT_DEFAULT   0
+#endif
+//   <o>timeout value [cycles] <0-0xFFFFFF>
+//   <i> Defines the TIMER1 timeout value
+//   <i> Default: 100000
+#ifndef RTE_TIMER1_TIMEOUT_DEFAULT
+ #define RTE_TIMER1_TIMEOUT_DEFAULT   65536
+#endif
+//   <e>GPIO Enable
+// ===============================
+//
+//   <i> If enabled, GPIO mode can be used for capturing timer interrupt.
+//   <i> Default: disable
+#ifndef RTE_GPIO1_EN
+ #define RTE_GPIO1_EN   0
+#endif
+//   <o>GPIO Interrupt
+//       <0x0=> 0
+//       <0x1=> 1
+//       <0x2=> 2
+//       <0x3=> 3
+//   <i> Defines gpio interrupt number to be used for the timer configuration.
+//   <i> Default: 1
+#ifndef RTE_TIMER1_GPIO_INT_DEFAULT
+ #define RTE_TIMER1_GPIO_INT_DEFAULT   1
+#endif
+//   <o>GPIO Mode
+//       <0x0=> Single Mode
+//       <0x1=> Continuous Mode
+//   <i> Defines the GPIO Capture Mode
+//   <i> Default: Single Mode
+#ifndef RTE_TIMER1_GPIO_MODE_DEFAULT
+ #define RTE_TIMER1_GPIO_MODE_DEFAULT   0
+#endif
+// </e>
+// <h>Interrupt priority configuration
+// ===============================
+//
+//   <o>Pre-empt priority <0-0x7>
+//   <i> Defines the pre-empt priority
+//   <i> Default: 0
+#ifndef RTE_TIMER1_INT_PREEMPT_PRI
+ #define RTE_TIMER1_INT_PREEMPT_PRI   0
+#endif
+//   <o>Subgroup priority <0-0x7>
+//   <i> Defines the subgroup priority
+//   <i> Default: 0
+#ifndef RTE_TIMER1_INT_SUBGRP_PRI
+ #define RTE_TIMER1_INT_SUBGRP_PRI   0
+#endif
+// </h>
+// </e>
+// <e>TIMER2 enable
+// ===============================
+//
+// <i> Enables TIMER2 module.
+// <i> Default: 1
+#ifndef RTE_TIMER2_EN
+ #define RTE_TIMER2_EN       0
+#endif
+//   <o>mode
+//       <0x0=> SHOT MODE
+//       <0x1=> FREE RUN
+//   <i> Defines the timer mode
+//   <i> Default: SHOT MODE
+#ifndef RTE_TIMER2_MODE_DEFAULT
+ #define RTE_TIMER2_MODE_DEFAULT   0
+#endif
+//   <o>clock source
+//       <0x0=> SLOWCLOCK DIV32
+//       <0x1=> SLOWCLOCK DIV2
+//   <i> Defines the timer clock source
+//   <i> Default: SLOWCLOCK DIV32
+#ifndef RTE_TIMER2_CLKSRC_DEFAULT
+ #define RTE_TIMER2_CLKSRC_DEFAULT   0
+#endif
+//   <o>prescale
+//       <0x0=> 1
+//       <0x1=> 2
+//       <0x2=> 4
+//       <0x3=> 8
+//       <0x4=> 16
+//       <0x5=> 32
+//       <0x6=> 64
+//       <0x7=> 128
+//   <i> Defines the TIMER2 prescale
+//   <i> Default: 1
+#ifndef RTE_TIMER2_PRESCALE_DEFAULT
+ #define RTE_TIMER2_PRESCALE_DEFAULT   0
+#endif
+//   <o>multi count value
+//       <0x0=> 1
+//       <0x1=> 2
+//       <0x2=> 3
+//       <0x3=> 4
+//       <0x4=> 5
+//       <0x5=> 6
+//       <0x6=> 7
+//       <0x7=> 8
+//   <i> Defines the TIMER2 multi count value
+//   <i> Default: 1
+#ifndef RTE_TIMER2_MULTI_COUNT_DEFAULT
+ #define RTE_TIMER2_MULTI_COUNT_DEFAULT   3
+#endif
+//   <o>timeout value [cycles] <0-0xFFFFFF>
+//   <i> Defines the TIMER2 timeout value
+//   <i> Default: 100000
+#ifndef RTE_TIMER2_TIMEOUT_DEFAULT
+ #define RTE_TIMER2_TIMEOUT_DEFAULT   65536
+#endif
+//   <e>GPIO Enable
+// ===============================
+//
+//   <i> If enabled, GPIO mode can be used for capturing timer interrupt.
+//   <i> Default: disable
+#ifndef RTE_GPIO2_EN
+ #define RTE_GPIO2_EN   0
+#endif
+//   <o>GPIO Interrupt
+//       <0x0=> 0
+//       <0x1=> 1
+//       <0x2=> 2
+//       <0x3=> 3
+//   <i> Defines gpio interrupt number to be used for the timer configuration.
+//   <i> Default: 2
+#ifndef RTE_TIMER2_GPIO_INT_DEFAULT
+ #define RTE_TIMER2_GPIO_INT_DEFAULT   2
+#endif
+//   <o>GPIO Mode
+//       <0x0=> Single Mode
+//       <0x1=> Continuous Mode
+//   <i> Defines the GPIO Capture Mode
+//   <i> Default: Single Mode
+#ifndef RTE_TIMER2_GPIO_MODE_DEFAULT
+ #define RTE_TIMER2_GPIO_MODE_DEFAULT   0
+#endif
+// </e>
+// <h>Interrupt priority configuration
+// ===============================
+//
+//   <o>Pre-empt priority <0-0x7>
+//   <i> Defines the pre-empt priority
+//   <i> Default: 0
+#ifndef RTE_TIMER2_INT_PREEMPT_PRI
+ #define RTE_TIMER2_INT_PREEMPT_PRI   0
+#endif
+//   <o>Subgroup priority <0-0x7>
+//   <i> Defines the subgroup priority
+//   <i> Default: 0
+#ifndef RTE_TIMER2_INT_SUBGRP_PRI
+ #define RTE_TIMER2_INT_SUBGRP_PRI   0
+#endif
+// </h>
+// </e>
+// <e>TIMER3 enable
+// ===============================
+//
+// <i> Enables TIMER3 module.
+// <i> Default: 1
+#ifndef RTE_TIMER3_EN
+ #define RTE_TIMER3_EN       0
+#endif
+//   <o>mode
+//       <0x0=> SHOT MODE
+//       <0x1=> FREE RUN
+//   <i> Defines the timer mode
+//   <i> Default: SHOT MODE
+#ifndef RTE_TIMER3_MODE_DEFAULT
+ #define RTE_TIMER3_MODE_DEFAULT   1
+#endif
+//   <o>clock source
+//       <0x0=> SLOWCLOCK DIV32
+//       <0x1=> SLOWCLOCK DIV2
+//   <i> Defines the timer clock source
+//   <i> Default: SLOWCLOCK DIV32
+#ifndef RTE_TIMER3_CLKSRC_DEFAULT
+ #define RTE_TIMER3_CLKSRC_DEFAULT   1
+#endif
+//   <o>prescale
+//       <0x0=> 1
+//       <0x1=> 2
+//       <0x2=> 4
+//       <0x3=> 8
+//       <0x4=> 16
+//       <0x5=> 32
+//       <0x6=> 64
+//       <0x7=> 128
+//   <i> Defines the TIMER3 prescale
+//   <i> Default: 1
+#ifndef RTE_TIMER3_PRESCALE_DEFAULT
+ #define RTE_TIMER3_PRESCALE_DEFAULT   1
+#endif
+//   <o>multi count value
+//       <0x0=> 1
+//       <0x1=> 2
+//       <0x2=> 3
+//       <0x3=> 4
+//       <0x4=> 5
+//       <0x5=> 6
+//       <0x6=> 7
+//       <0x7=> 8
+//   <i> Defines the TIMER3 multi count value
+//   <i> Default: 1
+#ifndef RTE_TIMER3_MULTI_COUNT_DEFAULT
+ #define RTE_TIMER3_MULTI_COUNT_DEFAULT   0
+#endif
+//   <o>timeout value [cycles] <0-0xFFFFFF>
+//   <i> Defines the TIMER3 timeout value
+//   <i> Default: 100000
+#ifndef RTE_TIMER3_TIMEOUT_DEFAULT
+ #define RTE_TIMER3_TIMEOUT_DEFAULT   65536
+#endif
+//   <e>GPIO Enable
+// ===============================
+//
+//   <i> If enabled, GPIO mode can be used for capturing timer interrupt.
+//   <i> Default: disable
+#ifndef RTE_GPIO3_EN
+ #define RTE_GPIO3_EN   0
+#endif
+//   <o>GPIO Interrupt
+//       <0x0=> 0
+//       <0x1=> 1
+//       <0x2=> 2
+//       <0x3=> 3
+//   <i> Defines gpio interrupt number to be used for the timer configuration.
+//   <i> Default: 3
+#ifndef RTE_TIMER3_GPIO_INT_DEFAULT
+ #define RTE_TIMER3_GPIO_INT_DEFAULT   3
+#endif
+//   <o>GPIO Mode
+//       <0x0=> Single Mode
+//       <0x1=> Continuous Mode
+//   <i> Defines the GPIO Capture Mode
+//   <i> Default: Single Mode
+#ifndef RTE_TIMER3_GPIO_MODE_DEFAULT
+ #define RTE_TIMER3_GPIO_MODE_DEFAULT   0
+#endif
+// </e>
+// <h>Interrupt priority configuration
+// ===============================
+//
+//   <o>Pre-empt priority <0-0x7>
+//   <i> Defines the pre-empt priority
+//   <i> Default: 0
+#ifndef RTE_TIMER3_INT_PREEMPT_PRI
+ #define RTE_TIMER3_INT_PREEMPT_PRI   0
+#endif
+//   <o>Subgroup priority <0-0x7>
+//   <i> Defines the subgroup priority
+//   <i> Default: 0
+#ifndef RTE_TIMER3_INT_SUBGRP_PRI
+ #define RTE_TIMER3_INT_SUBGRP_PRI   0
+#endif
+// </h>
+// </e>
+// <e>SYSTICK enable
+// ===============================
+//
+// <i> Enables SYSTICK module.
+// <i> Default: 1
+#ifndef RTE_SYSTICK_EN
+ #define RTE_SYSTICK_EN       0
+#endif
+//   <o>clock source
+//       <0x0=> EXTREF CLK
+//       <0x1=> CORE CLK
+//   <i> Defines the systick clock source
+//   <i> Default: EXTREF CLK
+#ifndef RTE_SYSTICK_CLKSRC_DEFAULT
+ #define RTE_SYSTICK_CLKSRC_DEFAULT   0
+#endif
+//   <o>reload value [cycles] <0-0xFFFFFF>
+//   <i> Defines the SYSTICK reload value
+//   <i> Default: 100000
+#ifndef RTE_SYSTICK_RELOAD_DEFAULT
+ #define RTE_SYSTICK_RELOAD_DEFAULT   31250
+#endif
+// <h>Interrupt priority configuration
+// ===============================
+//
+//   <o>Pre-empt priority <0-0x7>
+//   <i> Defines the pre-empt priority
+//   <i> Default: 0
+#ifndef RTE_SYSTICK_INT_PREEMPT_PRI
+ #define RTE_SYSTICK_INT_PREEMPT_PRI   0
+#endif
+//   <o>Subgroup priority <0-0x7>
+//   <i> Defines the subgroup priority
+//   <i> Default: 0
+#ifndef RTE_SYSTICK_INT_SUBGRP_PRI
+ #define RTE_SYSTICK_INT_SUBGRP_PRI   0
+#endif
+// </h>
+// </e>
+// </e>
 // <e> GPIO Configuration
 // =======================
 //
 //   <i> Defines if GPIO driver should be enabled.
 //   <i> Default: 0
 #ifndef RTE_GPIO
- #define RTE_GPIO     1
+ #define RTE_GPIO     0
 #endif
 // <e>GPIO 0 configure
 // ===============================
@@ -941,7 +1909,7 @@
 // <i> Enabled GPIO0 configuration
 // <i> Default: 0
 #ifndef RTE_GPIO0_EN
- #define RTE_GPIO0_EN       1
+ #define RTE_GPIO0_EN       0
 #endif
 //   <o>Drive strength
 //       <0x0=> 2x drive strength
@@ -1010,7 +1978,7 @@
 //   <i> Defines the io mode
 //   <i> Default: DISABLED
 #ifndef RTE_GPIO0_IOMODE_DEFAULT
- #define RTE_GPIO0_IOMODE_DEFAULT   0x002
+ #define RTE_GPIO0_IOMODE_DEFAULT   0x000
 #endif
 // </e>
 // <e>GPIO 1 configure
@@ -1097,7 +2065,7 @@
 // <i> Enabled GPIO2 configuration
 // <i> Default: 0
 #ifndef RTE_GPIO2_EN
- #define RTE_GPIO2_EN       1
+ #define RTE_GPIO2_EN       0
 #endif
 //   <o>Drive strength
 //       <0x0=> 2x drive strength
@@ -1107,7 +2075,7 @@
 //   <i> Defines the GPIO output strength
 //   <i> Default: 6x drive strength
 #ifndef RTE_GPIO2_DRIVE_DEFAULT
- #define RTE_GPIO2_DRIVE_DEFAULT   0
+ #define RTE_GPIO2_DRIVE_DEFAULT   3
 #endif
 //   <o>Low pass filter
 //       <0x0=> disable
@@ -1166,7 +2134,7 @@
 //   <i> Defines the io mode
 //   <i> Default: DISABLED
 #ifndef RTE_GPIO2_IOMODE_DEFAULT
- #define RTE_GPIO2_IOMODE_DEFAULT   0x005
+ #define RTE_GPIO2_IOMODE_DEFAULT   0x000
 #endif
 // </e>
 // <e>GPIO 3 configure
@@ -1565,7 +2533,7 @@
 // <i> Enabled GPIO8 configuration
 // <i> Default: 0
 #ifndef RTE_GPIO8_EN
- #define RTE_GPIO8_EN       1
+ #define RTE_GPIO8_EN       0
 #endif
 //   <o>Drive strength
 //       <0x0=> 2x drive strength
@@ -1634,7 +2602,7 @@
 //   <i> Defines the io mode
 //   <i> Default: DISABLED
 #ifndef RTE_GPIO8_IOMODE_DEFAULT
- #define RTE_GPIO8_IOMODE_DEFAULT   0x003
+ #define RTE_GPIO8_IOMODE_DEFAULT   0x000
 #endif
 // </e>
 // <e>GPIO 9 configure
@@ -1721,7 +2689,7 @@
 // <i> Enabled GPIO10 configuration
 // <i> Default: 0
 #ifndef RTE_GPIO10_EN
- #define RTE_GPIO10_EN       1
+ #define RTE_GPIO10_EN       0
 #endif
 //   <o>Drive strength
 //       <0x0=> 2x drive strength
@@ -1790,7 +2758,7 @@
 //   <i> Defines the io mode
 //   <i> Default: DISABLED
 #ifndef RTE_GPIO10_IOMODE_DEFAULT
- #define RTE_GPIO10_IOMODE_DEFAULT   0x003
+ #define RTE_GPIO10_IOMODE_DEFAULT   0x000
 #endif
 // </e>
 // <e>GPIO 11 configure
@@ -2189,7 +3157,7 @@
 // <i> Enables GPIO0 interrupt.
 // <i> Default: 1
 #ifndef RTE_GPIO_GPIO0_INT_EN
- #define RTE_GPIO_GPIO0_INT_EN       1
+ #define RTE_GPIO_GPIO0_INT_EN       0
 #endif
 //   <o>Interrupt source
 //       <0x0=> GPIO 0   <0x1=> GPIO 1   <0x2=> GPIO 2   <0x3=> GPIO 3
@@ -2207,7 +3175,7 @@
 //   <i> Defines the interrupt trigger event
 //   <i> Default: rising edge
 #ifndef RTE_GPIO_GPIO0_TRG_DEFAULT
- #define RTE_GPIO_GPIO0_TRG_DEFAULT   5
+ #define RTE_GPIO_GPIO0_TRG_DEFAULT   4
 #endif
 //   <o>Debounce filter
 //       <0x0=> disabled
@@ -2215,7 +3183,7 @@
 //   <i> Defines if debounce filter should be enabled
 //   <i> Default: disabled
 #ifndef RTE_GPIO_GPIO0_DBC_DEFAULT
- #define RTE_GPIO_GPIO0_DBC_DEFAULT   1
+ #define RTE_GPIO_GPIO0_DBC_DEFAULT   0
 #endif
 //   <o>Pre-empt priority <0-0x7>
 //   <i> Defines the pre-empt priority
@@ -2386,7 +3354,7 @@
 //   <i> Defines debounce filter count
 //   <i> Default: 10
 #ifndef RTE_GPIO_INT_DBC_CNT_DEFAULT
- #define RTE_GPIO_INT_DBC_CNT_DEFAULT   49
+ #define RTE_GPIO_INT_DBC_CNT_DEFAULT   10
 #endif
 // </h>
 // <h>SW JTAG PAD configuration

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>blinky</name>
+	<name>Zephyr</name>
 	<comment></comment>
 	<projects>
 	</projects>
@@ -23,7 +23,7 @@
 		<nature>org.eclipse.cdt.managedbuilder.core.managedBuildNature</nature>
 		<nature>org.eclipse.cdt.managedbuilder.core.ScannerConfigNature</nature>
 		<nature>com.arm.cmsis.pack.project.RteNature</nature>
-		<nature>com.arm.cmsis.pack.project.RteNature</nature>
+		<nature>com.onsemi.swm.plugins.sampleCodeFramework.scfNature</nature>
 		<nature>com.arm.cmsis.pack.project.RteNature</nature>
 	</natures>
 	<linkedResources>
@@ -31,6 +31,31 @@
 			<name>RTE/Device/RSL15/acs_write_asm.S</name>
 			<type>1</type>
 			<locationURI>$%7Bcmsis_pack_root%7D/ONSemiconductor/RSL15/1.2.150/firmware/source/lib/HAL/source/acs_write_asm.S</locationURI>
+		</link>
+		<link>
+			<name>RTE/Device/RSL15/ble_bass.c</name>
+			<type>1</type>
+			<locationURI>$%7Bcmsis_pack_root%7D/ONSemiconductor/RSL15/1.2.150/firmware/source/lib/ble_abstraction/ble_profiles/source/ble_bass.c</locationURI>
+		</link>
+		<link>
+			<name>RTE/Device/RSL15/ble_diss.c</name>
+			<type>1</type>
+			<locationURI>$%7Bcmsis_pack_root%7D/ONSemiconductor/RSL15/1.2.150/firmware/source/lib/ble_abstraction/ble_profiles/source/ble_diss.c</locationURI>
+		</link>
+		<link>
+			<name>RTE/Device/RSL15/ble_gap.c</name>
+			<type>1</type>
+			<locationURI>$%7Bcmsis_pack_root%7D/ONSemiconductor/RSL15/1.2.150/firmware/source/lib/ble_abstraction/ble_common/source/ble_gap.c</locationURI>
+		</link>
+		<link>
+			<name>RTE/Device/RSL15/ble_gatt.c</name>
+			<type>1</type>
+			<locationURI>$%7Bcmsis_pack_root%7D/ONSemiconductor/RSL15/1.2.150/firmware/source/lib/ble_abstraction/ble_common/source/ble_gatt.c</locationURI>
+		</link>
+		<link>
+			<name>RTE/Device/RSL15/bondlist.c</name>
+			<type>1</type>
+			<locationURI>$%7Bcmsis_pack_root%7D/ONSemiconductor/RSL15/1.2.150/firmware/source/lib/ble_abstraction/ble_common/source/bondlist.c</locationURI>
 		</link>
 		<link>
 			<name>RTE/Device/RSL15/clock.c</name>
@@ -48,9 +73,29 @@
 			<locationURI>$%7Bcmsis_pack_root%7D/ONSemiconductor/RSL15/1.2.150/firmware/source/lib/HAL/source/go_to_sleep_asm.S</locationURI>
 		</link>
 		<link>
+			<name>RTE/Device/RSL15/libbass.a</name>
+			<type>1</type>
+			<locationURI>$%7Bcmsis_pack_root%7D/ONSemiconductor/RSL15/1.2.150/lib/ble_profiles/Release/libbass.a</locationURI>
+		</link>
+		<link>
+			<name>RTE/Device/RSL15/libblelib.a</name>
+			<type>1</type>
+			<locationURI>$%7Bcmsis_pack_root%7D/ONSemiconductor/RSL15/1.2.150/lib/ble_core/Release/libblelib.a</locationURI>
+		</link>
+		<link>
+			<name>RTE/Device/RSL15/libdiss.a</name>
+			<type>1</type>
+			<locationURI>$%7Bcmsis_pack_root%7D/ONSemiconductor/RSL15/1.2.150/lib/ble_profiles/Release/libdiss.a</locationURI>
+		</link>
+		<link>
 			<name>RTE/Device/RSL15/lsad.c</name>
 			<type>1</type>
 			<locationURI>$%7Bcmsis_pack_root%7D/ONSemiconductor/RSL15/1.2.150/firmware/source/lib/HAL/source/lsad.c</locationURI>
+		</link>
+		<link>
+			<name>RTE/Device/RSL15/msg_handler.c</name>
+			<type>1</type>
+			<locationURI>$%7Bcmsis_pack_root%7D/ONSemiconductor/RSL15/1.2.150/firmware/source/lib/ble_abstraction/ble_common/source/msg_handler.c</locationURI>
 		</link>
 		<link>
 			<name>RTE/Device/RSL15/power_modes.c</name>
@@ -78,6 +123,21 @@
 			<locationURI>$%7Bcmsis_pack_root%7D/ONSemiconductor/RSL15/1.2.150/firmware/source/lib/cmsis/source/start.c</locationURI>
 		</link>
 		<link>
+			<name>RTE/Device/RSL15/stubprf.c</name>
+			<type>1</type>
+			<locationURI>$%7Bcmsis_pack_root%7D/ONSemiconductor/RSL15/1.2.150/firmware/source/lib/ble_abstraction/ble_common/source/stubprf.c</locationURI>
+		</link>
+		<link>
+			<name>RTE/Device/RSL15/swmTrace.c</name>
+			<type>1</type>
+			<locationURI>$%7Bcmsis_pack_root%7D/ONSemiconductor/RSL15/1.2.150/firmware/source/lib/swmTrace/source/swmTrace.c</locationURI>
+		</link>
+		<link>
+			<name>RTE/Device/RSL15/swmTrace_wrapper.c</name>
+			<type>1</type>
+			<locationURI>$%7Bcmsis_pack_root%7D/ONSemiconductor/RSL15/1.2.150/firmware/source/lib/swmTrace/source/uart_dma/swmTrace_wrapper.c</locationURI>
+		</link>
+		<link>
 			<name>RTE/Device/RSL15/trim.c</name>
 			<type>1</type>
 			<locationURI>$%7Bcmsis_pack_root%7D/ONSemiconductor/RSL15/1.2.150/firmware/source/lib/HAL/source/trim.c</locationURI>
@@ -86,6 +146,11 @@
 			<name>RTE/Device/RSL15/uart.c</name>
 			<type>1</type>
 			<locationURI>$%7Bcmsis_pack_root%7D/ONSemiconductor/RSL15/1.2.150/firmware/source/lib/HAL/source/uart.c</locationURI>
+		</link>
+		<link>
+			<name>RTE/Device/RSL15/uart_common.c</name>
+			<type>1</type>
+			<locationURI>$%7Bcmsis_pack_root%7D/ONSemiconductor/RSL15/1.2.150/firmware/source/lib/swmTrace/source/uart_common/uart_common.c</locationURI>
 		</link>
 	</linkedResources>
 </projectDescription>
