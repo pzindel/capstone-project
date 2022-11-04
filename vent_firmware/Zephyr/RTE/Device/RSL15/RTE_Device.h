@@ -974,7 +974,7 @@
 //   <i> Defines if PWM driver should be enabled.
 //   <i> Default: 1
 #ifndef RTE_PWM
- #define RTE_PWM     0
+ #define RTE_PWM     1
 #endif
 // <e>PWM SLOWCLK Select
 // ===============================
@@ -1901,7 +1901,7 @@
 //   <i> Defines if GPIO driver should be enabled.
 //   <i> Default: 0
 #ifndef RTE_GPIO
- #define RTE_GPIO     0
+ #define RTE_GPIO     1
 #endif
 // <e>GPIO 0 configure
 // ===============================

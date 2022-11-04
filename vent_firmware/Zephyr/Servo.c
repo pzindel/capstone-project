@@ -41,7 +41,7 @@ uint8_t get_position(void)
 	return position;
 }
 
-void set_position(uint8_t)
+void set_position(uint8_t angle)
 {
 	return;
 }

@@ -20,7 +20,7 @@
 /* ----------------------------------------------------------------------------
  * Include files
  * --------------------------------------------------------------------------*/
-
+#include "app.h"
 
 /* ----------------------------------------------------------------------------
  * Defines
@@ -77,10 +77,10 @@ uint8_t get_position(void);
  * Description   : Sets the position of the servo to the specified degree
  * 				   between 0 and 180.
  *
- * Parameters    : uint8_t : The angle that the servo should move to (0-180).
+ * Parameters    : uint8_t angle : The angle that the servo should move to (0-180).
  *
  * Returns		 : None
  */
-void set_position(uint8_t);
+void set_position(uint8_t angle);
 
 #endif /* INCLUDE_SERVO_H_ */
