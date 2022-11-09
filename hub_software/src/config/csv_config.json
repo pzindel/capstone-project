@@ -10,7 +10,7 @@
 		"vent_closed",
 		"temperature",
 		"humidity"
-		]
+		],
 	"DATA_TYPES": {
 		"id": "int",
 		"utc_time": "int",
