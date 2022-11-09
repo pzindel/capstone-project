@@ -1,10 +1,10 @@
 {
-	"D5:BB:FF:22:11:94": {
-		"device_name": "ble_periph_server",
-		"last_discover_utc": 1667341681,
-		"last_data_exchange_utc": 1667341681,
-		"last_read_rssi": -56,
-		"vent_closed": true,
-		"vent_description": "Living Room"
-	}
+    "D5:BB:FF:22:11:94": {
+        "device_name": "ble_periph_server",
+        "last_discover_utc": 1667341681,
+        "last_data_exchange_utc": 1667341681,
+        "last_read_rssi": -56,
+        "vent_closed": true,
+        "vent_description": "Living Room"
+    }
 }
