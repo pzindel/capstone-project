@@ -28,16 +28,16 @@ from version import __version__
 # GLOBAL VARIABLES
 # Set paths to all the config and data files
 CURRENT_DIR = os.getcwd()
-# Logging configuration file
-LOG_CONFIG_DIR = os.path.join(CURRENT_DIR, "config", "logging_config.json")
-# BLE configuration file
-BLE_CONFIG_DIR = os.path.join(CURRENT_DIR, "config", "ble_config.json")
-# Vents statuses and configurations file
-VENT_CONFIG_DIR = os.path.join(CURRENT_DIR, "config", "vent_status_config.json")
-# CSV data log configuration file
-CSV_CONFIG_DIR = os.path.join(CURRENT_DIR, "config", "csv_config.json")
-# CSV data log files
-VENT_DATA_DIR = os.path.join(CURRENT_DIR, "data", "vent_status_log.csv")
+# Logging configuration filepath
+LOG_CONFIG_FP = os.path.join(CURRENT_DIR, "config", "logging_config.json")
+# BLE configuration filepath
+BLE_CONFIG_FP = os.path.join(CURRENT_DIR, "config", "ble_config.json")
+# Vents statuses and configurations filepath
+VENT_CONFIG_FP = os.path.join(CURRENT_DIR, "config", "vent_status_config.json")
+# CSV data log configuration filepath
+CSV_CONFIG_FP = os.path.join(CURRENT_DIR, "config", "csv_config.json")
+# CSV data log filepath
+VENT_DATA_FP = os.path.join(CURRENT_DIR, "data", "vent_status_log.csv")
 
 
 # FUNCTIONS
@@ -108,7 +108,7 @@ def csv_append_data(data_entry: list, delim: str) -> None:
     delim : str
         The delimiter character used by the CSV file.
     """
-    with open(VENT_DATA_DIR, "a", newline="", encoding="utf-8") as file:
+    with open(VENT_DATA_FP, "a", newline="", encoding="utf-8") as file:
         writer = csv.writer(file, delimiter=delim)
         writer.writerow(data_entry)
     return
@@ -168,8 +168,8 @@ def discover_vents(ble_config: dict, vent_config: dict) -> tuple:
                 vent_config[device.address]["last_read_rssi"] = device.rssi
 
     # Save the new configuration data to the files
-    save_config_file(ble_config, BLE_CONFIG_DIR)
-    save_config_file(vent_config, VENT_CONFIG_DIR)
+    save_config_file(ble_config, BLE_CONFIG_FP)
+    save_config_file(vent_config, VENT_CONFIG_FP)
 
     return ble_config, vent_config
 
@@ -196,6 +196,50 @@ def load_config_files(*args: str) -> list:
     
     return files
 
+def initialize_data_csv(config: dict) -> int:
+    """
+    Returns the ID value of the latest entry in the CSV data file. If the file doesn't exist,
+    creates a file using the configuration data provided.
+
+    Parameters
+    ----------
+    config : dict
+        The configuration data for the CSV file storing the vent data.
+
+    Returns
+    -------
+    int
+        The entry ID of the latest entry in the CSV file (-1 if there are no existing entries).
+    """
+    # Track the ID of the last entry in the file
+    last_id = -1
+    id_attribute_name = "id"
+
+    # Check if the file already exists
+    if not os.path.isfile(VENT_DATA_FP):
+        # The file doesn't exist, create a new open with appropriate header info
+        with open(VENT_DATA_FP, "w", newline="", encoding="utf-8") as file:
+            writer = csv.writer(file, delimiter=config["DELIMITER"])
+            writer.writerow(config["HEADER"])
+
+        # Update the last ID
+        last_id = -1
+    else:
+        # The file does exist, retrieve the latest ID
+        # Read the data on the file
+        with open(VENT_DATA_FP, "r", newline="", encoding="utf-8") as file:
+            reader = csv.reader(file, delimiter=config["DELIMITER"])
+            file_contents = list(reader)
+
+        # Check the header for the ID column
+        header = [attribute.lower() for attribute in file_contents[0]]
+        id_index = header.index(id_attribute_name)
+
+        # Check the ID attribute of the last row
+        last_id = int(file_contents[-1][id_index])
+
+    return last_id
+
 
 def manage_vents(ble_config: dict, vent_config: dict, csv_config: dict) -> None:
     """
@@ -214,7 +258,7 @@ def manage_vents(ble_config: dict, vent_config: dict, csv_config: dict) -> None:
         The configuration data for the CSV file storing the vent data.
     """
     # Initialize the CSV file for saving vent data
-    last_entry_id = initialize_data_csv()
+    last_entry_id = initialize_data_csv(csv_config)
     
     # Process each vent device
     for device_address, device_data in vent_config.items():
@@ -268,7 +312,7 @@ def manage_vents(ble_config: dict, vent_config: dict, csv_config: dict) -> None:
         device_data["vent_closed"] = new_vent_closed_state
         
         vent_config[device_address] = device_data
-        save_config_file(vent_config, VENT_CONFIG_DIR)
+        save_config_file(vent_config, VENT_CONFIG_FP)
         
     return
 
@@ -345,7 +389,7 @@ def setup_logging(config: dict) -> logging.Logger:
 if __name__ == "__main__":
     # Load the config data
     log_config, ble_config, vent_config, csv_config = load_config_files(
-        LOG_CONFIG_DIR, BLE_CONFIG_DIR, VENT_CONFIG_DIR, CSV_CONFIG_DIR
+        LOG_CONFIG_FP, BLE_CONFIG_FP, VENT_CONFIG_FP, CSV_CONFIG_FP
     )
     
     # Initialize the logger
