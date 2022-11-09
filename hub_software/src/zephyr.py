@@ -1,7 +1,7 @@
 ################################################################################
 # File Name         : zephyr.py
 # Description       : Contains Zephyr Python program is designed to run on a
-#                     Raspberry PI as centrel hub software.
+#                     Raspberry PI as central hub software.
 #
 # Author            : Pierino Zindel
 # Date              : November 01, 2022
@@ -26,7 +26,7 @@ from version import __version__
 
 
 # GLOBAL VARIABLES
-# Set paths to all of the config and data files
+# Set paths to all the config and data files
 CURRENT_DIR = os.getcwd()
 # Logging configuration file
 LOG_CONFIG_DIR = os.path.join(CURRENT_DIR, "config", "logging_config.json")
@@ -114,7 +114,7 @@ def csv_append_data(data_entry: list, delim: str) -> None:
     return
 
 
-def discover_vents(ble_config: dict, vent_config: dict) -> list:
+def discover_vents(ble_config: dict, vent_config: dict) -> tuple:
     """
     Scans the area for active BLE devices and adds new vent devices
     to the list of known devices (in the config data). New config
@@ -130,10 +130,10 @@ def discover_vents(ble_config: dict, vent_config: dict) -> list:
 
     Returns
     -------
-    list[ble_config, vent_config]
+    tuple(ble_config, vent_config)
         Updated versions of the config data.
     """
-    # Get a list of all of the discoverable devices
+    # Get a list of all the discoverable devices
     detected_devices = asyncio.run(ble_scan())
     
     # Get a timestamp for the time of connection
@@ -163,7 +163,7 @@ def discover_vents(ble_config: dict, vent_config: dict) -> list:
                     "vent_description": "UNINITIALIZED"
                 }
             else:
-                # Config exists; update the discover time and rssi
+                # Config exists; update the discovery time and rssi
                 vent_config[device.address]["last_discover_utc"] = timestamp
                 vent_config[device.address]["last_read_rssi"] = device.rssi
 
@@ -171,7 +171,7 @@ def discover_vents(ble_config: dict, vent_config: dict) -> list:
     save_config_file(ble_config, BLE_CONFIG_DIR)
     save_config_file(vent_config, VENT_CONFIG_DIR)
 
-    return
+    return ble_config, vent_config
 
 
 def load_config_files(*args: str) -> list:
