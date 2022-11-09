@@ -239,7 +239,10 @@ def initialize_data_csv(config: dict) -> int:
         id_index = header.index(id_attribute_name)
 
         # Check the ID attribute of the last row
-        last_id = int(file_contents[-1][id_index])
+        if len(file_contents) == 1:
+            last_id = -1
+        else:
+            last_id = int(file_contents[-1][id_index])
 
     return last_id
 
