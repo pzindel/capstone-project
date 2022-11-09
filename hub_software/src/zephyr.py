@@ -196,6 +196,7 @@ def load_config_files(*args: str) -> list:
     
     return files
 
+
 def initialize_data_csv(config: dict) -> int:
     """
     Returns the ID value of the latest entry in the CSV data file. If the file doesn't exist,
