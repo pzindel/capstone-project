@@ -19,8 +19,10 @@ import logging
 from logging.handlers import TimedRotatingFileHandler
 import os
 from time import time, localtime
+
 # 3rd Party Libraries
 from bleak import BleakScanner, BleakClient
+
 # Custom Libraries
 from version import __version__
 
@@ -100,7 +102,7 @@ def csv_append_data(data_entry: list, delim: str) -> None:
     """
     A wrapper function for appending a row of data to a CSV file using
     the CSV writer.
-    
+
     Parameters
     ----------
     data_entry : list
@@ -135,7 +137,7 @@ def discover_vents(ble_config: dict, vent_config: dict) -> tuple:
     """
     # Get a list of all the discoverable devices
     detected_devices = asyncio.run(ble_scan())
-    
+
     # Get a timestamp for the time of connection
     timestamp = int(time())
 
@@ -160,7 +162,7 @@ def discover_vents(ble_config: dict, vent_config: dict) -> tuple:
                     "last_data_exchange_utc": 0,
                     "last_read_rssi": device.rssi,
                     "vent_closed": True,
-                    "vent_description": "UNINITIALIZED"
+                    "vent_description": "UNINITIALIZED",
                 }
             else:
                 # Config exists; update the discovery time and rssi
@@ -193,7 +195,7 @@ def load_config_files(*args: str) -> list:
     for filepath in args:
         with open(filepath, "r") as file:
             files.append(json.load(file))
-    
+
     return files
 
 
@@ -248,7 +250,7 @@ def manage_vents(ble_config: dict, vent_config: dict, csv_config: dict) -> None:
     Current state values are read from the vent unit and updated with values
     found in the config file.
     Values are then recorded in a CSV data file.
-    
+
     Parameters
     ----------
     ble_config : dict
@@ -260,37 +262,27 @@ def manage_vents(ble_config: dict, vent_config: dict, csv_config: dict) -> None:
     """
     # Initialize the CSV file for saving vent data
     last_entry_id = initialize_data_csv(csv_config)
-    
+
     # Process each vent device
     for device_address, device_data in vent_config.items():
         # Get the device's current open/close state
-        response = asyncio.run(
-            ble_read(device_address, ble_config["UUIDS"]["UUID_VENT_STATE"])
-        )
+        response = asyncio.run(ble_read(device_address, ble_config["UUIDS"]["UUID_VENT_STATE"]))
         vent_closed_state = int.from_bytes(response, "big")
-        
+
         # Get the device's current temperature
-        response = asyncio.run(
-            ble_read(device_address, ble_config["UUIDS"]["UUID_TEMPERATURE"])
-        )
+        response = asyncio.run(ble_read(device_address, ble_config["UUIDS"]["UUID_TEMPERATURE"]))
         temperature = int.from_bytes(response, "big")
-        
+
         # Get the device's current humidity
-        response = asyncio.run(
-            ble_read(device_address, ble_config["UUIDS"]["UUID_HUMIDITY"])
-        )
+        response = asyncio.run(ble_read(device_address, ble_config["UUIDS"]["UUID_HUMIDITY"]))
         humidity = int.from_bytes(response, "big")
-        
+
         # Set the new vent state based on current state and config data
         new_vent_closed_state = bytearray(int(device_data["vent_closed"]))
         asyncio.run(
-            ble_write(
-                device_address,
-                ble_config["UUIDS"]["UUID_VENT_STATE"],
-                new_vent_closed_state
-            )
+            ble_write(device_address, ble_config["UUIDS"]["UUID_VENT_STATE"], new_vent_closed_state)
         )
-        
+
         # Record the data in the CSV
         last_entry_id += 1
         timestamp = int(time())
@@ -304,17 +296,17 @@ def manage_vents(ble_config: dict, vent_config: dict, csv_config: dict) -> None:
             device_data["last_read_rssi"],
             new_vent_closed_state,
             temperature,
-            humidity
+            humidity,
         ]
         csv_append_data(data_entry, csv_config["DELIMITER"])
-        
+
         # Update the vent config data
         device_data["last_data_exchange_utc"] = timestamp
         device_data["vent_closed"] = new_vent_closed_state
-        
+
         vent_config[device_address] = device_data
         save_config_file(vent_config, VENT_CONFIG_FP)
-        
+
     return
 
 
@@ -392,12 +384,12 @@ if __name__ == "__main__":
     log_config, ble_config, vent_config, csv_config = load_config_files(
         LOG_CONFIG_FP, BLE_CONFIG_FP, VENT_CONFIG_FP, CSV_CONFIG_FP
     )
-    
+
     # Initialize the logger
     logger = setup_logging(log_config)
-    
+
     # Discover new devices and add to list of existing
     ble_config, vent_config = discover_vents(ble_config, vent_config)
-    
+
     # Connect to devices, RX statuses and TX updates
     manage_vents(ble_config, vent_config, csv_config)
