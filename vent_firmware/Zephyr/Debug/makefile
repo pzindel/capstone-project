@@ -57,7 +57,7 @@ main-build: Zephyr.elf secondary-outputs
 Zephyr.elf: $(OBJS) $(USER_OBJS) makefile objects.mk $(OPTIONAL_TOOL_DEPS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: Cross ARM C Linker'
-	arm-none-eabi-gcc -mcpu=cortex-m33 -march=armv8-m.main+dsp -mthumb -mlittle-endian -mfloat-abi=hard -mfpu=fpv4-sp-d16 -O0 -fmessage-length=0 -fsigned-char -ffunction-sections -fdata-sections -Wall  -g -T "S:\pieri\onsemi-workspace\Zephyr\RTE\Device\RSL15\sections.ld" -nostartfiles -Xlinker --gc-sections -Wl,-Map,"Zephyr.map" --specs=nano.specs --specs=nosys.specs -o "Zephyr.elf" -Wl,--start-group $(OBJS) $(USER_OBJS) $(LIBS) -Wl,--end-group
+	arm-none-eabi-gcc -mcpu=cortex-m33 -march=armv8-m.main+dsp -mthumb -mlittle-endian -mfloat-abi=hard -mfpu=fpv4-sp-d16 -O0 -fmessage-length=0 -fsigned-char -ffunction-sections -fdata-sections -Wall  -g -T "D:\OneDrive - Conestoga College\Courses\EECE8040\capstone-project\vent_firmware\Zephyr\RTE\Device\RSL15\sections.ld" -nostartfiles -Xlinker --gc-sections -Wl,-Map,"Zephyr.map" --specs=nano.specs --specs=nosys.specs -o "Zephyr.elf" -Wl,--start-group $(OBJS) $(USER_OBJS) $(LIBS) -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 
