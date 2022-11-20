@@ -59,6 +59,8 @@ extern "C"
 
 #include "i2c_driver.h"
 #include "HDC2080.h"
+#include "pwm_driver.h"
+#include "Servo.h"
 
 
 /* ----------------------------------------------------------------------------

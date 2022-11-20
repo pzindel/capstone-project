@@ -991,7 +991,7 @@
 // <i> Enables PWM0 module.
 // <i> Default: 1
 #ifndef RTE_PWM0_EN
- #define RTE_PWM0_EN       0
+ #define RTE_PWM0_EN       1
 #endif
 //   <o>PWM0 GPIO pad
 //       <0=> 0 <1=> 1
@@ -1005,19 +1005,19 @@
 //   <i> Defines the GPIO pad which should be used for the PWM0
 //   <i> Default: 1
 #ifndef RTE_PWM0_GPIO_PIN
- #define RTE_PWM0_GPIO_PIN   1
+ #define RTE_PWM0_GPIO_PIN   2
 #endif
 //   <o>PWM0 period [cycles] <0-255>
 //   <i> Defines the PWM0 period
 //   <i> Default: 100
 #ifndef RTE_PWM0_PER_DEFAULT
- #define RTE_PWM0_PER_DEFAULT   100
+ #define RTE_PWM0_PER_DEFAULT   3200
 #endif
 //   <o>PWM0 duty cycle [cycles] <0-255>
 //   <i> Defines the PWM0 duty cycle
 //   <i> Default: 50
 #ifndef RTE_PWM0_DTC_DEFAULT
- #define RTE_PWM0_DTC_DEFAULT   50
+ #define RTE_PWM0_DTC_DEFAULT   384
 #endif
 //   <o>PWM0 dithering [cycles] <0-255>
 //   <i> Defines the PWM0 dithering

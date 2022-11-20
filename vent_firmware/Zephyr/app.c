@@ -35,6 +35,11 @@ double temperature_reading = 0;
 double humidity_reading = 0;
 uint8_t motor_state = 0;
 
+DRIVER_PWM_t *pwm;
+DRIVER_GPIO_t *gpio;
+extern DRIVER_PWM_t Driver_PWM;
+extern DRIVER_GPIO_t Driver_GPIO;
+
 void error_check(uint32_t status)
 {
     /* Otherwise, halt the program */
@@ -73,6 +78,7 @@ void motor_initialization(void)
 	// TODO: implement initialization function in motor driver module
 	//initialize_pwm_control();
 	//initialize_motor_pins();
+//	initialize_servo();
 
 	return;
 }

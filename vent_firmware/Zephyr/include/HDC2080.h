@@ -32,7 +32,9 @@
  * --------------------------------------------------------------------------*/
 // General
 #define BITS_PER_BYTE			(8)
+#ifndef MICRO_DELAY
 #define MICRO_DELAY(x)			Sys_Delay((x * SystemCoreClock) / 1000000)
+#endif
 
 // I2C configuration
 #define RSL15_SLAVE_ADDRESS		(5)
