@@ -32,8 +32,8 @@
  * --------------------------------------------------------------------------*/
 // General
 #define BITS_PER_BYTE			(8)
-#ifndef MICRO_DELAY
-#define MICRO_DELAY(x)			Sys_Delay((x * SystemCoreClock) / 1000000)
+#ifndef MICRO_DELAY											// microseconds delay function
+ #define MICRO_DELAY(x)			Sys_Delay(((x * SystemCoreClock) / 1000000))
 #endif
 
 // I2C configuration

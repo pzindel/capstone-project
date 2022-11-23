@@ -149,6 +149,22 @@ static const struct att_db_desc att_db_cs_svc1[] =
                       sizeof(CS_BUTTON_CHAR_NAME) - 1,
                       CS_BUTTON_CHAR_NAME,
                       NULL),
+
+    /* From the BLE Vent Transfer */
+    CS_CHAR_UUID_128(CS_VENT_VALUE_CHAR1,
+                     CS_VENT_VALUE_VAL1,
+                     CS_CHAR_VENT_UUID,
+                     PERM(RD, ENABLE) | PERM(WRITE_REQ, ENABLE) | PERM(WRITE_COMMAND, ENABLE),
+                     sizeof(app_env_cs.vent_from_air_buffer),
+                     app_env_cs.vent_from_air_buffer,
+                     CUSTOMSS_VentCharCallback),
+    CS_CHAR_CCC(CS_VENT_VALUE_CCC1,
+                app_env_cs.vent_from_air_cccd_value,
+                NULL),
+    CS_CHAR_USER_DESC(CS_VENT_VALUE_USR_DSCP1,
+                      sizeof(CS_VENT_CHAR_NAME) - 1,
+                      CS_VENT_CHAR_NAME,
+                      NULL),
 };
 
 static uint32_t notifyOnTimeout;
@@ -593,13 +609,42 @@ uint8_t CUSTOMSS_LEDCharCallback(uint8_t conidx, uint16_t attidx, uint16_t handl
         memcpy(to, from, length);
         if (app_env_cs.led_from_air_buffer[0] == 0)
         {
-            Sys_GPIO_Set_High(LED_STATE_GPIO);    /* Turn LED off */
+//            Sys_GPIO_Set_High(LED_STATE_GPIO);    /* Turn LED off */
+        	set_vent_state(VENT_CLOSED_STATE);
             swmLogInfo("\nReceived LED OFF");
         }
         else if (app_env_cs.led_from_air_buffer[0] == 1)
         {
-            Sys_GPIO_Set_Low(LED_STATE_GPIO);    /* Turn LED on */
-            swmLogInfo("\nReceived LED ON");
+//            Sys_GPIO_Set_Low(LED_STATE_GPIO);    /* Turn LED on */
+        	set_vent_state(VENT_OPEN_STATE);
+        	swmLogInfo("\nReceived LED ON");
+        }
+        return ATT_ERR_NO_ERROR;
+    }
+    else
+    {
+        swmLogInfo("\nLEDCharCallback (%d): operation (%d): error(%d) \r\n", conidx, operation, hl_status);
+        return hl_status;
+    }
+}
+
+
+uint8_t CUSTOMSS_VentCharCallback(uint8_t conidx, uint16_t attidx, uint16_t handle,
+                                 uint8_t *to, const uint8_t *from,
+                                 uint16_t length, uint16_t operation, uint8_t hl_status)
+{
+    if (hl_status == GAP_ERR_NO_ERROR)
+    {
+        memcpy(to, from, length);
+        if (app_env_cs.vent_from_air_buffer[0] == 0)
+        {
+        	set_vent_state(VENT_CLOSED_STATE);    /* Turn LED off */
+//            swmLogInfo("\nReceived LED OFF");
+        }
+        else if (app_env_cs.vent_from_air_buffer[0] == 1)
+        {
+        	set_vent_state(VENT_OPEN_STATE);    /* Turn LED on */
+//            swmLogInfo("\nReceived LED ON");
         }
         return ATT_ERR_NO_ERROR;
     }

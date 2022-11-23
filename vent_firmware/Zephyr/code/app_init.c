@@ -17,6 +17,7 @@
 
 #include <app.h>
 #include "ble_bass.h"
+#include "test.h"
 
 #if SWMTRACE_ENABLE
 static uint32_t traceOptions[] = {

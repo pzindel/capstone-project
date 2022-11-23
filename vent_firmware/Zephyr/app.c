@@ -78,7 +78,7 @@ void motor_initialization(void)
 	// TODO: implement initialization function in motor driver module
 	//initialize_pwm_control();
 	//initialize_motor_pins();
-//	initialize_servo();
+	initialize_servo();
 
 	return;
 }

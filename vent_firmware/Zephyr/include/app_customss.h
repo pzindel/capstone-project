@@ -67,6 +67,9 @@ extern "C"
 #define CS_CHAR_BUTTON_UUID             { 0x24, 0xdc, 0x0e, 0x6e, 0x04, 0x50, \
                                           0xca, 0x9e, 0xe5, 0xa9, 0xa3, 0x00, \
                                           0xb5, 0xf3, 0x93, 0xe0 }
+#define CS_CHAR_VENT_UUID               { 0x24, 0xdc, 0x0e, 0x6e, 0x05, 0x50, \
+                                          0xca, 0x9e, 0xe5, 0xa9, 0xa3, 0x00, \
+                                          0xb5, 0xf3, 0x93, 0xe0 }
 
 #define CS_VALUE_MAX_LENGTH          20
 #define CS_LONG_VALUE_MAX_LENGTH     40
@@ -80,6 +83,7 @@ extern "C"
 #define CS_TEMP_CHAR_NAME          "TEMPERATURE_VALUE"
 #define CS_LED_CHAR_NAME           "LED_STATE"
 #define CS_BUTTON_CHAR_NAME        "BUTTON_STATE"
+#define CS_VENT_CHAR_NAME          "VENT_STATE"
 
 /* Uncomment to use indications in the RX_VALUE_LONG characteristic */
 /* #define RX_VALUE_LONG_INDICATION */
@@ -148,6 +152,12 @@ enum CS1_att
     CS_BUTTON_VALUE_CCC1,
     CS_BUTTON_VALUE_USR_DSCP1,
 
+    /* LED Characteristic in Service 1 */
+    CS_VENT_VALUE_CHAR1,
+    CS_VENT_VALUE_VAL1,
+    CS_VENT_VALUE_CCC1,
+    CS_VENT_VALUE_USR_DSCP1,
+
     /* Max number of services and characteristics */
     CS_NB1,
 };
@@ -181,6 +191,10 @@ struct app_env_tag_cs
     /* To BLE Button transfer buffer */
     uint8_t button_to_air_buffer[CS_LED_BUTTON_MAX_LENGTH];
     uint8_t button_to_air_cccd_value[2];
+
+    /* From BLE transfer buffer */
+    uint8_t vent_from_air_buffer[CS_LED_BUTTON_MAX_LENGTH];
+    uint8_t vent_from_air_cccd_value[2];
 };
 
 enum custom_app_msg_id
@@ -216,6 +230,9 @@ uint8_t CUSTOMSS_RXLongCharCallback(uint8_t conidx, uint16_t attidx, uint16_t ha
                                     uint16_t length, uint16_t operation, uint8_t hl_status);
 
 uint8_t CUSTOMSS_LEDCharCallback(uint8_t conidx, uint16_t attidx, uint16_t handle,
+                                 uint8_t *to, const uint8_t *from,
+                                 uint16_t length, uint16_t operation, uint8_t hl_status);
+uint8_t CUSTOMSS_VentCharCallback(uint8_t conidx, uint16_t attidx, uint16_t handle,
                                  uint8_t *to, const uint8_t *from,
                                  uint16_t length, uint16_t operation, uint8_t hl_status);
 

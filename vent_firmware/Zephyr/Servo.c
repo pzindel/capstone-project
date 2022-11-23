@@ -56,8 +56,8 @@ uint8_t get_vent_state(void)
 void initialize_servo(void)
 {
 	// Initialize the GPIO pin
-    gpio = &Driver_GPIO;
-	gpio->Initialize((GPIO_SignalEvent_t) 0);
+    //gpio = &Driver_GPIO;
+	//gpio->Initialize((GPIO_SignalEvent_t) 0);
 
 	// Disable the PWM channels
 	PWM->CTRL |= (0x100 << SERVO_PWM_CHANNEL);
