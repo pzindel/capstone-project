@@ -18,6 +18,7 @@ import json
 import logging
 from logging.handlers import TimedRotatingFileHandler
 import os
+import struct
 from time import time, localtime
 
 # 3rd Party Libraries
@@ -161,8 +162,15 @@ def discover_vents(ble_config: dict, vent_config: dict) -> tuple:
                     "last_discover_utc": timestamp,
                     "last_data_exchange_utc": 0,
                     "last_read_rssi": device.rssi,
-                    "vent_closed": True,
                     "vent_description": "UNINITIALIZED",
+                    "vent_closed": True,
+                    "last_temperature": 0,
+                    "last_humidity": 0,
+                    "last_battery_level": 0,
+                    "last_led_state": 0,
+                    "last_button_state": 0,
+                    "last_temp_upper_threshold": 0,
+                    "last_temp_lower_threshold": 0,
                 }
             else:
                 # Config exists; update the discovery time and rssi
@@ -274,17 +282,50 @@ def manage_vents(ble_config: dict, vent_config: dict, csv_config: dict) -> None:
 
         # Get the device's current temperature
         response = asyncio.run(ble_read(device_address, ble_config["UUIDS"]["UUID_TEMPERATURE"]))
-        temperature = int.from_bytes(response, "big")
+        temperature = struct.unpack("f", response)
 
         # Get the device's current humidity
         response = asyncio.run(ble_read(device_address, ble_config["UUIDS"]["UUID_HUMIDITY"]))
-        humidity = int.from_bytes(response, "big")
+        humidity = struct.unpack("f", response)
+        
+        # Get the device's current temperature upper threshold
+        response = asyncio.run(ble_read(device_address, ble_config["UUIDS"]["UUID_TEMP_UPPER_THRESHOLD"]))
+        temp_upper_threshold = struct.unpack("f", response)
+        
+        # Get the device's current temperature lower threshold
+        response = asyncio.run(ble_read(device_address, ble_config["UUIDS"]["UUID_TEMP_LOWER_THRESHOLD"]))
+        temp_lower_threshold = struct.unpack("f", response)
+
+        # Get the device's current Battery level
+        response = asyncio.run(ble_read(device_address, ble_config["UUIDS"]["UUID_BATTERY"]))
+        battery_level = int.from_bytes(response, "big")
+        
+        # Get the device's current LED state
+        response = asyncio.run(ble_read(device_address, ble_config["UUIDS"]["UUID_LED_STATE"]))
+        led_state = int.from_bytes(response, "big")
+        
+        # Get the device's current Button state
+        response = asyncio.run(ble_read(device_address, ble_config["UUIDS"]["UUID_BUTTON_STATE"]))
+        button_state = int.from_bytes(response, "big")
 
         # Set the new vent state based on current state and config data
         new_vent_closed_state = device_data["vent_closed"]
         vent_state_bytearray = bytearray(int(new_vent_closed_state))
         asyncio.run(
             ble_write(device_address, ble_config["UUIDS"]["UUID_VENT_STATE"], vent_state_bytearray)
+        )
+        
+        # Set the new vent thresholds based on the current config data
+        new_upper_threshold = device_data["temp_upper_threshold"]
+        upper_threshold_bytearray = bytearray(struct.pack("f", new_upper_threshold))
+        asyncio.run(
+            ble_write(device_address, ble_config["UUIDS"]["UUID_TEMP_UPPER_THRESHOLD"], upper_threshold_bytearray)
+        )
+        
+        new_lower_threshold = device_data["temp_lower_threshold"]
+        lower_threshold_bytearray = bytearray(struct.pack("f", new_lower_threshold))
+        asyncio.run(
+            ble_write(device_address, ble_config["UUIDS"]["UUID_TEMP_LOWER_THRESHOLD"], lower_threshold_bytearray)
         )
 
         # Record the data in the CSV
@@ -301,12 +342,24 @@ def manage_vents(ble_config: dict, vent_config: dict, csv_config: dict) -> None:
             new_vent_closed_state,
             temperature,
             humidity,
+            battery_level,
+            led_state,
+            button_state,
+            temp_upper_threshold,
+            temp_lower_threshold,
         ]
         csv_append_data(data_entry, csv_config["DELIMITER"])
 
         # Update the vent config data
         device_data["last_data_exchange_utc"] = timestamp
         device_data["vent_closed"] = new_vent_closed_state
+        device_data["last_temperature"] = temperature
+        device_data["last_humidity"] = humidity
+        device_data["last_battery_level"] = battery_level
+        device_data["last_led_state"] = led_state
+        device_data["last_button_state"] = button_state
+        device_data["temp_upper_threshold"] = new_upper_threshold
+        device_data["temp_lower_threshold"] = new_lower_threshold
 
         vent_config[device_address] = device_data
         save_config_file(vent_config, VENT_CONFIG_FP)

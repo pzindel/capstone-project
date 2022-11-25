@@ -232,11 +232,11 @@ void BatteryServiceServerInit(void)
 {
     /* Passing 1 as the number of battery instances since the
      * ble_peripheral_server sample code is only designed to work with 1
-     * battery instance, and the APP_BASS_ReadBattLevel function as the
+     * battery instance, and the APP_BASS_ReadTempLevel function as the
      * callback function that will be called in the BLE abstraction layer
      * to return the battery level.
      */
-     BASS_Initialize(APP_BAS_NB, APP_BASS_ReadBattLevel);
+     BASS_Initialize(APP_BAS_NB, APP_BASS_ReadTempLevel);
 
      /* Periodically monitor the battery level.
       * Only notify changes in battery level */

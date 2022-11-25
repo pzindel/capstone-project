@@ -10,8 +10,9 @@
  *                          HDC_INT <--> GPIO_XX (GPIO Input / Interrupt)
  *
  * Author		    : Pierino Zindel
- * Date				: October 06, 2022
- * Version			: 1.1.0
+ * Creation Date	: October 06, 2022
+ * Version			: 1.2.0
+ * Last Rev. Date   : November 24, 2022
  ******************************************************************************
  */
 
@@ -201,9 +202,9 @@ extern ARM_DRIVER_I2C *i2c;
  *
  * Parameters    : uint16_t data : The 16-bit ADC value.
  *
- * Returns		 : double : The relative humidity (0-100%).
+ * Returns		 : float : The relative humidity (0-100%).
  */
-double adc_to_humidity(uint16_t data);
+float adc_to_humidity(uint16_t data);
 
 /* Function      : adc_to_temperature
  *
@@ -212,9 +213,9 @@ double adc_to_humidity(uint16_t data);
  *
  * Parameters    : uint16_t data : The 16-bit ADC value.
  *
- * Returns		 : double : The temperature output.
+ * Returns		 : float : The temperature output.
  */
-double adc_to_temperature(uint16_t data);
+float adc_to_temperature(uint16_t data);
 
 /* Function      : change_to_register
  *
@@ -230,13 +231,24 @@ void change_to_register(uint8_t reg);
 /* Function      : get_humidity
  *
  * Description   : Requests a humidity ADC value from the HDC2080 slave module
- * 				   and returns a relative humidity value (between 0% and 100%).
+ *                 and returns a relative humidity value (between 0% and 100%).
  *
  * Parameters    : None
  *
- * Returns		 : double : The relative humidity (0-100%).
+ * Returns       : float : The relative humidity (0-100%).
  */
-double get_humidity(void);
+float get_humidity(void);
+
+/* Function      : get_raw_humidity
+ *
+ * Description   : Requests a humidity ADC value from the HDC2080 slave module
+ * 				   and returns the raw 16-bit value from the registers.
+ *
+ * Parameters    : None
+ *
+ * Returns		 : uint16_t : The relative humidity in raw ADC output format.
+ */
+uint16_t get_raw_humidity(void);
 
 /* Function      : get_temperature
  *
@@ -246,9 +258,20 @@ double get_humidity(void);
  *
  * Parameters    : None
  *
- * Returns		 : double : The temperature output.
+ * Returns		 : float : The temperature output.
  */
-double get_temperature(void);
+float get_temperature(void);
+
+/* Function      : get_raw_temperature
+ *
+ * Description   : Requests a humidity ADC value from the HDC2080 slave module
+ *                 and returns the raw 16-bit value from the registers.
+ *
+ * Parameters    : None
+ *
+ * Returns       : uint16_t : The temperature in raw ADC output format.
+ */
+uint16_t get_raw_temperature(void);
 
 /* Function      : i2c_callback
  *

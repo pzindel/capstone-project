@@ -10,8 +10,9 @@
  *                          HDC_INT <--> GPIO_XX (GPIO Input)  // interrupt pin
  *
  * Author		    : Pierino Zindel
- * Date				: October 06, 2022
- * Version			: 1.1.0
+ * Creation Date    : October 06, 2022
+ * Version			: 1.2.0
+ * Last Rev. Date   : November 24, 2022
  ******************************************************************************
  */
 
@@ -26,12 +27,12 @@
  * Function definitions
  * --------------------------------------------------------------------------*/
 
-double adc_to_humidity(uint16_t data)
+float adc_to_humidity(uint16_t data)
 {
 	return data / (float) ADC_RESOLUTION * HUMIDITY_SCALING + HUMIDITY_OFFSET;
 }
 
-double adc_to_temperature(uint16_t data)
+float adc_to_temperature(uint16_t data)
 {
 	return data / (float) ADC_RESOLUTION * TEMPERATURE_SCALING + TEMPERATURE_OFFSET;
 }
@@ -48,52 +49,73 @@ void change_to_register(uint8_t reg)
 	return;
 }
 
-double get_humidity(void)
+float get_humidity(void)
 {
 	// Initialize a variable to store the final humidity
 	uint16_t buffer = 0;
 
-	// Set the register for the humidity LSB
-	change_to_register(HUMIDITY_LOW);
-
-	// Retrieve the low humidity value
-	buffer |= read_from_register();
-
-	// Set the register for the humidity MSB
-	change_to_register(HUMIDITY_HIGH);
-
-	// Retrieve the high humidity value
-	buffer |= read_from_register() << BITS_PER_BYTE;
+	// Get the ADC humidity reading
+	buffer = get_raw_humidity();
 
 	// Adjust reading into a proper humidity
-	double humidity = adc_to_humidity(buffer);
+	float humidity = adc_to_humidity(buffer);
 
 	return humidity;
 }
 
-double get_temperature(void)
+uint16_t get_raw_humidity(void)
+{
+    // Initialize a variable to store the final humidity
+    uint16_t buffer = 0;
+
+    // Set the register for the humidity LSB
+    change_to_register(HUMIDITY_LOW);
+
+    // Retrieve the low humidity value
+    buffer |= read_from_register();
+
+    // Set the register for the humidity MSB
+    change_to_register(HUMIDITY_HIGH);
+
+    // Retrieve the high humidity value
+    buffer |= read_from_register() << BITS_PER_BYTE;
+
+    return buffer;
+}
+
+float get_temperature(void)
 {
 	// Initialize a variable to store the final temperature
 	uint16_t buffer = 0;
 
-	// Set the register for the temp LSB
-	change_to_register(TEMPERATURE_LOW);
-
-	// Retrieve the low temp value
-	buffer |= read_from_register();
-
-	// Set the register for the temp MSB
-	change_to_register(TEMPERATURE_HIGH);
-
-	// Retrieve the high temp value
-	buffer |= read_from_register() << BITS_PER_BYTE;
+	// Get the ADC temp reading
+	buffer = get_raw_temperature();
 
 	// Adjust reading into a proper temperature
-	double temperature = adc_to_temperature(buffer);
+	float temperature = adc_to_temperature(buffer);
 
 	return temperature;
 }
 
+uint16_t get_raw_temperature(void)
+{
+    // Initialize a variable to store the final temperature
+    uint16_t buffer = 0;
+
+    // Set the register for the temp LSB
+    change_to_register(TEMPERATURE_LOW);
+
+    // Retrieve the low temp value
+    buffer |= read_from_register();
+
+    // Set the register for the temp MSB
+    change_to_register(TEMPERATURE_HIGH);
+
+    // Retrieve the high temp value
+    buffer |= read_from_register() << BITS_PER_BYTE;
+
+    return buffer;
+}
 
 void i2c_callback(uint32_t event)
 {

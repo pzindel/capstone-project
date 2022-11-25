@@ -12,7 +12,8 @@
  *
  * Author		    : Pierino Zindel
  * Date				: October 26, 2022
- * Version			: 1.0.0
+ * Version			: 1.2.0
+ * Last Rev. Date   : November 24, 2022
  ******************************************************************************
  */
 

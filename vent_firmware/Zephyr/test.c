@@ -13,6 +13,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include <app.h>
 #include "HDC2080.h"
+#include "test.h"
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
@@ -26,7 +27,7 @@
 /* Private functions ---------------------------------------------------------*/
 
 
-uint8_t APP_BASS_ReadBattLevel(uint8_t bas_nb)
+uint8_t APP_BASS_ReadTempLevel(uint8_t bas_nb)
 {
     uint8_t batt_lvl_percent;
 

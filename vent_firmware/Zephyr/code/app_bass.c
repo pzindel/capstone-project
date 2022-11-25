@@ -49,7 +49,7 @@ static TRIM_Type *trims = TRIM;
  * Assumptions   : Return the same battery value for any bas_nb argument.
  * ------------------------------------------------------------------------- */
 
-__attribute__((weak)) uint8_t APP_BASS_ReadBattLevel(uint8_t bas_nb)
+uint8_t APP_BASS_ReadBattLevel(uint8_t bas_nb)
 {
     uint8_t batt_lvl_percent;
     uint32_t batt_lvl_mV;

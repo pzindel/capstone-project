@@ -1,5 +1,6 @@
 /******************************************************************************
  * File Name        : app.c
+ * Disclaimer       : Adapted from onsemi example "ble_peripheral_server".
  * Description		: Main application source file
  *
  * Pinout			: HDC2080 Sensor (I2C peripheral)
@@ -10,8 +11,8 @@
  *                    		FS90_CTRL <--> GPIO_2 (PWM_0 Signal)
  *
  * Author		    : Pierino Zindel
- * Date				: October 25, 2022
- * Version			: 0.1.0
+ * Last Rev. Date	: November 23, 2022
+ * Version			: 1.0.0
  ******************************************************************************
  * @copyright @parblock
  * Copyright (c) 2022 Semiconductor Components Industries, LLC (d/b/a
@@ -27,27 +28,42 @@
  ******************************************************************************
  */
 
+
+/* ----------------------------------------------------------------------------
+ * Include files
+ * --------------------------------------------------------------------------*/
 #include <app.h>
 
-/* Global variables */
+
+/* ----------------------------------------------------------------------------
+ * Global variables
+ * --------------------------------------------------------------------------*/
 ARM_DRIVER_I2C *i2c;
-double temperature_reading = 0;
-double humidity_reading = 0;
-uint8_t motor_state = 0;
 
 DRIVER_PWM_t *pwm;
+
 DRIVER_GPIO_t *gpio;
-extern DRIVER_PWM_t Driver_PWM;
-extern DRIVER_GPIO_t Driver_GPIO;
+
+EncodedFloat temperature_reading;
+EncodedFloat humidity_reading;
+EncodedFloat temperature_upper_threshold;
+EncodedFloat temperature_lower_threshold;
+
+uint8_t vent_state_var;
+uint8_t *vent_state = &vent_state_var;
+uint8_t battery_level;
+
+
+/* ----------------------------------------------------------------------------
+ * Function definitions
+ * --------------------------------------------------------------------------*/
 
 void error_check(uint32_t status)
 {
-    /* Otherwise, halt the program */
-    if (status != ARM_DRIVER_OK)
-    {
+    // Otherwise, halt the program
+    if (status != ARM_DRIVER_OK) {
         //ToggleGPIO(APP_I2C_EVENT_GPIO, 4, 2);
-        while (1)
-        {
+        while (1) {
             SYS_WATCHDOG_REFRESH();
         }
     }
@@ -62,17 +78,48 @@ void sensor_initialization(void)
 	return;
 }
 
-void sensor_measure(void)
+void sensor_measurement(void)
 {
-	// Trigger the sensor and store the results
+	// Trigger the HDC2080 sensor and store the results
 	trigger_measurement();
-	temperature_reading = get_temperature();
-	humidity_reading = get_humidity();
+	temperature_reading.value = get_temperature();
+	humidity_reading.value = get_humidity();
+
+	// Retrieve the battery level and store the result
+	battery_level = APP_BASS_ReadBattLevel(0);
+
+	// Auto open/closed the vent if thresholds are active
+	vent_threshold_check();
 
 	return;
 }
 
-void motor_initialization(void)
+void vent_threshold_check(void)
+{
+    // Check if the threshold is active and if vent needs to be closed
+    if ((temperature_upper_threshold.value < (THRESHOLD_OFF_LIMIT - THRESHOLD_OFF_DELTA))
+        && (temperature_reading.value >= temperature_upper_threshold.value)
+        && (*vent_state != VENT_CLOSED_STATE))
+    {
+        // Update the global variable and the motor
+        *vent_state = VENT_CLOSED_STATE;
+        vent_update();
+    }
+
+    // Check if the threshold is active and if the vent needs to be opened
+    if ((temperature_lower_threshold.value < (THRESHOLD_OFF_LIMIT - THRESHOLD_OFF_DELTA))
+        && (temperature_reading.value <= temperature_lower_threshold.value)
+        && (*vent_state != VENT_OPEN_STATE))
+    {
+        // Update the global variable and the motor
+        *vent_state = VENT_OPEN_STATE;
+        vent_update();
+    }
+
+    return;
+}
+
+void vent_initialization(void)
 {
 	// Initialize the PWM function and GPIO pins for the servo
 	// TODO: implement initialization function in motor driver module
@@ -82,18 +129,15 @@ void motor_initialization(void)
 
 	return;
 }
-void motor_update(void)
+void vent_update(void)
 {
-	// Update the motor to the given state
-	// TODO: define a new set of drivers for the motor
-	//set_motor_state(motor_state);
+	// Update the vent/motor state to match the variables current value
+	set_vent_state(*vent_state);
 	return;
 }
 
 void ble_initialization(void)
 {
-	// TODO: implement
-
     // Configure RF parameters and initialize BLE stack
     BLESystemInit();
 
@@ -124,40 +168,41 @@ int main(void)
     // Disable interrupts and exceptions temporarily at startup
     PRIMASK_FAULTMASK_DISABLE_INTERRUPTS();
 
-	/* Initialize main functionalities */
+	// Initialize main functionalities
     DeviceInit();
     SWMTraceInit();
 
     // Print log
     swmLogInfo("__%s has started.\n", "ble_peripheral_server");
 
-    /* Initialize peripherals */
-
+    // Initialize peripherals
     sensor_initialization();
-    motor_initialization();
+    vent_initialization();
     ble_initialization();
+
+    // Initialize global variables
+    sensor_measurement();
+    *vent_state = 0;
+    temperature_upper_threshold.value = (float)THRESHOLD_OFF_LIMIT;
+    temperature_lower_threshold.value = (float)THRESHOLD_OFF_LIMIT;
 
     // Enable interrupts and exceptions
     PRIMASK_FAULTMASK_ENABLE_INTERRUPTS();
 
-    //* Main application spin loop */
+    // Main application spin loop
     main_loop();
 }
 
 void main_loop(void)
 {
-    while (1)
-    {
+    while (1) {
         // Refresh the watchdog timer //
         SYS_WATCHDOG_REFRESH();
         BLE_Kernel_Process();
 
-        if (GPIO0_Pressed())
-        {
-        	for (unsigned int i = 0; i < BLE_CONNECTION_MAX; i++)
-            {
-        		if(GAPC_IsConnectionActive(i))
-        		{
+        if (GPIO0_Pressed()) {
+        	for (unsigned int i = 0; i < BLE_CONNECTION_MAX; i++) {
+        		if(GAPC_IsConnectionActive(i)) {
         			ke_msg_send_basic(CUSTOM_BUTTON_NTF, KE_BUILD_ID(TASK_APP, i), KE_BUILD_ID(TASK_APP, i));
         		}
             }

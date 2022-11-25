@@ -65,6 +65,7 @@ extern DMA_CFG_t dmaCfgR, dmaCfgT;
 #define SYSCLOCK_I2C_MIN_RATIO           2.5
 
 /* I2C interrupt handler function */
+void I2C0_IRQHandler(void);
 #if (I2C_CM33_CODE_EN)
 void I2C0_IRQHandler(void);
 void I2C1_IRQHandler(void);

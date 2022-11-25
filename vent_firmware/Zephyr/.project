@@ -23,8 +23,6 @@
 		<nature>org.eclipse.cdt.managedbuilder.core.managedBuildNature</nature>
 		<nature>org.eclipse.cdt.managedbuilder.core.ScannerConfigNature</nature>
 		<nature>com.arm.cmsis.pack.project.RteNature</nature>
-		<nature>com.onsemi.swm.plugins.sampleCodeFramework.scfNature</nature>
-		<nature>com.arm.cmsis.pack.project.RteNature</nature>
 	</natures>
 	<linkedResources>
 		<link>

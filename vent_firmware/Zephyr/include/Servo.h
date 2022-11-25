@@ -12,7 +12,8 @@
  *
  * Author		    : Pierino Zindel
  * Date				: October 26, 2022
- * Version			: 1.0.0
+ * Version			: 1.2.0
+ * Last Rev. Date   : November 24, 2022
  ******************************************************************************
  */
 
@@ -77,10 +78,10 @@
  * Global variables
  * --------------------------------------------------------------------------*/
 // Import the handler for the PWM peripheral
-extern DRIVER_PWM_t Driver_PWM;
-extern DRIVER_GPIO_t Driver_GPIO;
-extern DRIVER_PWM_t *pwm;
-extern DRIVER_GPIO_t *gpio;
+//extern DRIVER_PWM_t Driver_PWM;
+//extern DRIVER_GPIO_t Driver_GPIO;
+//extern DRIVER_PWM_t *pwm;
+//extern DRIVER_GPIO_t *gpio;
 
 
 /* ----------------------------------------------------------------------------

@@ -9,7 +9,12 @@
 		"device_rssi",
 		"vent_closed",
 		"temperature",
-		"humidity"
+		"humidity",
+		"battery_level",
+		"led_state",
+		"button_state",
+		"temp_upper_threshold",
+		"temp_lower_threshold"
 		],
 	"DATA_TYPES": {
 		"id": "int",
@@ -20,7 +25,13 @@
 		"device_rssi": "int",
 		"vent_closed": "bool",
 		"temperature": "float",
-		"humidity": "float"
+		"humidity": "float",
+		"battery_level": "int",
+		"led_state": "bool",
+		"button_state": "bool",
+		"temp_upper_threshold": "float",
+		"temp_lower_threshold": "float"
+		
 	},
 	"DATA_DESCRIPTION": {
 		"id": "A unique identifier value for the entry.",
@@ -32,5 +43,10 @@
 		"vent_closed": "A true/false indicating if the vent is closed at time of recording.",
 		"temperature": "A temperature measurement of the vent device.",
 		"humidity": "A humidity measurement of the vent device."
+		"battery_level": "A measurment of the battery level in percent.",
+		"led_state": "A Boolean indicating if the LED is off (0) or on (1).",
+		"button_state": "A Boolean indicating if the button is depressed (1) or not (0).",
+		"temp_upper_threshold": "An upper temperature threshold for which the vent is automatically closed if it is exceeded. A value over 100 deactivates the thresholding.",
+		"temp_lower_threshold": "A lower temperature threshold for which the vent is automically opened if it is exceeded. A value of 100 deactivates the thresholding."
 	}
 }

@@ -24,6 +24,6 @@
 /* Exported macro ------------------------------------------------------------*/
 
 /* Exported functions ------------------------------------------------------- */
-uint8_t APP_BASS_ReadBattLevel(uint8_t bas_nb);
+uint8_t APP_BASS_ReadTempLevel(uint8_t bas_nb);
 
 #endif
