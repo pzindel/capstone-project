@@ -1,17 +1,17 @@
 {
     "D5:BB:FF:22:11:94": {
         "device_name": "ble_periph_server",
-        "last_discover_utc": 1667341681,
-        "last_data_exchange_utc": 1667341681,
-        "last_read_rssi": -56,
+        "last_discover_utc": 1669693003,
+        "last_data_exchange_utc": 1669693048,
+        "last_read_rssi": -44,
         "vent_description": "Living Room",
-        "vent_closed": true,
-		"last_temperature": 0,
-		"last_humidity": 0,
-		"last_battery_level": 100,
-		"last_led_state": 0,
-		"last_button_state": 0,
-		"temp_upper_threshold": 0,
-		"temp_lower_threshold": 0
+        "vent_closed": false,
+        "last_temperature": 28.63,
+        "last_humidity": 35.43,
+        "last_battery_level": 100,
+        "last_led_state": 0,
+        "last_button_state": 0,
+        "temp_upper_threshold": 0,
+        "temp_lower_threshold": 0
     }
 }

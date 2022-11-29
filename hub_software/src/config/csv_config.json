@@ -42,7 +42,7 @@
 		"device_rssi": "The singal strength between the hub and vent unit on last connect.",
 		"vent_closed": "A true/false indicating if the vent is closed at time of recording.",
 		"temperature": "A temperature measurement of the vent device.",
-		"humidity": "A humidity measurement of the vent device."
+		"humidity": "A humidity measurement of the vent device.",
 		"battery_level": "A measurment of the battery level in percent.",
 		"led_state": "A Boolean indicating if the LED is off (0) or on (1).",
 		"button_state": "A Boolean indicating if the button is depressed (1) or not (0).",

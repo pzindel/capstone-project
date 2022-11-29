@@ -150,7 +150,7 @@ def discover_vents(ble_config: dict, vent_config: dict) -> tuple:
         # Check if the device is a vent unit (has a whitelisted name)
         if device.name in ble_config["WHITELISTED_DEVICE_NAMES"]:
             # Check if it is a new device
-            if device.name not in ble_config["WHITELISTED_DEVICE_ADDRESSES"]:
+            if device.address not in ble_config["WHITELISTED_DEVICE_ADDRESSES"]:
                 # Add the device to list of know devices
                 ble_config["WHITELISTED_DEVICE_ADDRESSES"].append(device.address)
 
@@ -283,10 +283,14 @@ def manage_vents(ble_config: dict, vent_config: dict, csv_config: dict) -> None:
         # Get the device's current temperature
         response = asyncio.run(ble_read(device_address, ble_config["UUIDS"]["UUID_TEMPERATURE"]))
         temperature = struct.unpack("f", response)
+        # Convert to float and rounding
+        temperature = round(float('.'.join(str(elem) for elem in temperature)), 2)
 
         # Get the device's current humidity
         response = asyncio.run(ble_read(device_address, ble_config["UUIDS"]["UUID_HUMIDITY"]))
         humidity = struct.unpack("f", response)
+        # Convert to float and rounding
+        humidity = round(float('.'.join(str(elem) for elem in humidity)), 2)
         
         # Get the device's current temperature upper threshold
         response = asyncio.run(ble_read(device_address, ble_config["UUIDS"]["UUID_TEMP_UPPER_THRESHOLD"]))
@@ -434,9 +438,7 @@ def setup_logging(config: dict) -> logging.Logger:
 
     return logger
 
-
-# MAIN FUNCTION
-if __name__ == "__main__":
+def main():
     # Load the config data
     log_config, ble_config, vent_config, csv_config = load_config_files(
         LOG_CONFIG_FP, BLE_CONFIG_FP, VENT_CONFIG_FP, CSV_CONFIG_FP
@@ -450,3 +452,8 @@ if __name__ == "__main__":
 
     # Connect to devices, RX statuses and TX updates
     manage_vents(ble_config, vent_config, csv_config)
+
+
+# MAIN FUNCTION
+if __name__ == "__main__": main()
+    
