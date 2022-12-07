@@ -135,7 +135,7 @@ enum appm_msg
 
 // BLE private address of local device
 #ifndef APP_BLE_PRIVATE_ADDR
-#define APP_BLE_PRIVATE_ADDR            { 0x94, 0x11, 0x22, 0xff, 0xbb, 0xD5 }
+#define APP_BLE_PRIVATE_ADDR            { 0x93, 0x11, 0x22, 0xff, 0xbb, 0xD5 }
 #endif	 // APP_BLE_PRIVATE_ADDR
 
 // Number of standard profiles and custom services added in this application
@@ -151,7 +151,7 @@ enum appm_msg
 // Advertising data is composed by device name and company identification (ID)
 //  Notes: In order to have both device name and company ID included in
 //         the advertising, the length of APP_DEVICE_NAME should not exceed 22 bytes.
-#define APP_DEVICE_NAME                 "ble_periph_server"
+#define APP_DEVICE_NAME                 "zephyr_ble_vent"
 #define APP_DEVICE_NAME_LEN             (sizeof(APP_DEVICE_NAME) - 1)
 
 // Manufacturer info (onsemi Company ID)

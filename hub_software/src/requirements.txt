@@ -1,5 +1,9 @@
 black==22.10.0
 bleak==0.19.0
 coverage==6.5.0
+dash==2.7.0
+dash-daq==0.5.0
 flake8==5.0.4
-schedule
+numpy==1.23.5
+pandas==1.5.2
+schedule==1.0.1

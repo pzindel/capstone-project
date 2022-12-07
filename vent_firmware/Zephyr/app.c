@@ -89,7 +89,7 @@ void sensor_measurement(void)
 	battery_level = APP_BASS_ReadBattLevel(0);
 
 	// Auto open/closed the vent if thresholds are active
-	vent_threshold_check();
+	//vent_threshold_check();
 
 	return;
 }

@@ -6,7 +6,7 @@
 # Author            : Pierino Zindel
 # Date              : November 01, 2022
 # Last Revision     : N/A
-# Version           : 0.1.0
+# Version           : 1.0.0
 ################################################################################
 
 
@@ -314,7 +314,7 @@ def manage_vents(ble_config: dict, vent_config: dict, csv_config: dict) -> None:
 
         # Set the new vent state based on current state and config data
         new_vent_closed_state = device_data["vent_closed"]
-        vent_state_bytearray = bytearray(int(new_vent_closed_state))
+        vent_state_bytearray = bytearray([int(new_vent_closed_state)])
         asyncio.run(
             ble_write(device_address, ble_config["UUIDS"]["UUID_VENT_STATE"], vent_state_bytearray)
         )

@@ -1,9 +1,11 @@
 {
     "WHITELISTED_DEVICE_NAMES": [
-        "ble_periph_server"
+        "ble_periph_server",
+		"zephyr_ble_vent"
     ],
     "WHITELISTED_DEVICE_ADDRESSES": [
-        "D5:BB:FF:22:11:94"
+        "D5:BB:FF:22:11:94",
+		"D5:BB:FF:22:11:93"
     ],
     "UUIDS": {
         "UUID_BATTERY": "E093F3B5-00A3-A9E5-9ECA-50026E0EDC24",

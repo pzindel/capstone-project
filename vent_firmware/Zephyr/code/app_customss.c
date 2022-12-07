@@ -563,10 +563,10 @@ uint8_t CUSTOMSS_LEDCharCallback(uint8_t conidx, uint16_t attidx, uint16_t handl
         memcpy(to, from, length);
         // TODO: remove this from the function after testing is complete
         // Store buffer to global variable
-        *vent_state = app_env_cs.vent_from_air_buffer[0];
+        //*vent_state = app_env_cs.vent_from_air_buffer[0];
 
         // Update the vent with the new state
-        vent_update();
+        //vent_update();
 
         if (app_env_cs.led_from_air_buffer[0] == 0) {
             set_vent_state(VENT_OPEN_STATE);
@@ -624,9 +624,17 @@ uint8_t CUSTOMSS_VentCharCallback(uint8_t conidx, uint16_t attidx, uint16_t hand
         memcpy(to, from, length);
         // Store buffer to global variable
         *vent_state = app_env_cs.vent_from_air_buffer[0];
+        swmLogInfo("\nVentCharCallback (%d) \t operation (%d)\r\n", *vent_state, app_env_cs.vent_from_air_buffer[0]);
 
         // Update the vent with the new state
-        vent_update();
+        //vent_update();
+        //set_vent_state(*vent_state);
+
+        if (app_env_cs.vent_from_air_buffer[0] == 0) {
+            set_vent_state(VENT_OPEN_STATE);
+        } else if (app_env_cs.vent_from_air_buffer[0] == 1) {
+            set_vent_state(VENT_CLOSED_STATE);
+        }
 
         return ATT_ERR_NO_ERROR;
     } else {
